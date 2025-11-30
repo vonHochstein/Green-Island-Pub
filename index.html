@@ -4,117 +4,29 @@
   <meta charset="UTF-8" />
   <title>Whiskydatenbank – Green Island Pub (Demo)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #0c0c10;
-      color: #f5f5f5;
-    }
-    header {
-      padding: 1.5rem 1rem;
-      text-align: center;
-      border-bottom: 1px solid #333;
-      background: #11131a;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.4rem;
-    }
-    header p {
-      margin: 0.3rem 0 0;
-      font-size: 0.9rem;
-      color: #bbb;
-    }
-    .wrapper {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 1rem;
-    }
-    .filters {
-      margin-bottom: 1rem;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .filters input {
-      flex: 1 1 200px;
-      padding: 0.5rem 0.6rem;
-      border-radius: 4px;
-      border: 1px solid #444;
-      background: #151822;
-      color: #f5f5f5;
-    }
-    .whisky-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 1rem;
-    }
-    .whisky-card {
-      background: #151822;
-      border-radius: 8px;
-      padding: 0.75rem;
-      border: 1px solid #262a36;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .whisky-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: contain;
-      border-radius: 6px;
-      background: #0b0c10;
-    }
-    .whisky-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-      align-items: baseline;
-    }
-    .whisky-name {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-    .whisky-price {
-      font-size: 0.9rem;
-      color: #ffd27f;
-    }
-    .whisky-meta {
-      font-size: 0.8rem;
-      color: #aaa;
-    }
-    .whisky-desc {
-      font-size: 0.85rem;
-      color: #ccc;
-    }
-    .badge {
-      display: inline-block;
-      padding: 0.1rem 0.4rem;
-      border-radius: 999px;
-      border: 1px solid #444;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #bbb;
-    }
-    .status {
-      margin-top: 0.5rem;
-      font-size: 0.8rem;
-      color: #888;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Whiskydatenbank – Green Island Pub (Demo)</h1>
-    <p>Digitale Whiskykarte · Nur Demo mit 5 Einträgen</p>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark">GI</div>
+        <div class="brand-text">
+          <h1>Green Island Pub</h1>
+          <p>Whiskydatenbank · Demo-Version</p>
+        </div>
+      </div>
+      <div class="header-badge">Demo</div>
+    </div>
   </header>
 
   <main class="wrapper">
     <section class="filters">
-      <input id="searchInput" type="text" placeholder="Suche nach Name, Destillerie, Stil, Land …" />
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Suche nach Name, Destillerie, Stil, Land …"
+      />
     </section>
 
     <section id="status" class="status">
