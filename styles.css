@@ -1,14 +1,17 @@
 :root {
-  --green-dark: #0f2922;
-  --green-deep: #15352c;
-  --anthracite: #181a1f;
-  --anthracite-soft: #22252c;
-  --gold: #d4af37;
-  --gold-soft: #e4c66b;
-  --text-main: #f5f5f5;
-  --text-muted: #a9a9b5;
-  --border-soft: #2c313a;
+  /* Farben – natürliches Blattgrün + warmes Gold */
+  --green-deep: #06110c;        /* sehr dunkles Blattgrün, fast schwarzgrün */
+  --green-forest: #0c1c14;      /* etwas heller, Waldgrün */
+  --green-soft: #15261c;        /* dezentes Flaschengrün für Flächen */
+
+  --gold-main: #d4b15a;         /* warmes, weiches Gold für Überschriften */
+  --gold-text: #e6d6a0;         /* helleres Gold für Fließtext */
+  --gold-muted: #bca56a;        /* abgeschwächtes Gold für Nebeninfos */
+
+  --border-soft: #273228;
 }
+
+/* RESET / Basis */
 
 *,
 *::before,
@@ -17,22 +20,21 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   margin: 0;
   padding: 0;
-  background: radial-gradient(circle at top, #14352b 0, #0b0e10 45%, #050607 100%);
-  color: var(--text-main);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Durchgehender, ruhiger Hintergrund – kein abgesetzter Kopf mehr */
+  background:
+    radial-gradient(circle at top left, rgba(37, 68, 49, 0.35), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(29, 52, 40, 0.3), transparent 55%),
+    linear-gradient(135deg, var(--green-deep), #030705);
+  color: var(--gold-text);
 }
 
-/* HEADER */
+/* HEADER – integriert in den Hintergrund, nicht abgesetzt */
 
 .site-header {
-  background: linear-gradient(135deg, var(--green-dark), #090c0e);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
-  padding: 0.9rem 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  padding: 1rem 1rem 0.4rem;
 }
 
 .header-inner {
@@ -51,41 +53,44 @@ body {
 }
 
 .brand-mark {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--gold);
+  border: 1px solid rgba(212, 177, 90, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--gold-soft);
-  background: radial-gradient(circle at 30% 20%, #1e4034, var(--green-dark) 60%, #050607 100%);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+  color: var(--gold-main);
+  background:
+    radial-gradient(circle at 30% 20%, #203122, var(--green-forest) 60%, #020403 100%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
 .brand-text h1 {
   margin: 0;
   font-size: 1.25rem;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-main);
 }
 
 .brand-text p {
-  margin: 0.1rem 0 0;
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: var(--gold-muted);
 }
 
 .header-badge {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.16em;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
-  border: 1px solid rgba(212, 175, 55, 0.6);
-  color: var(--gold-soft);
-  background: rgba(10, 12, 14, 0.8);
+  border: 1px solid rgba(212, 177, 90, 0.6);
+  color: var(--gold-main);
+  background: rgba(5, 8, 6, 0.6);
 }
 
 /* LAYOUT */
@@ -93,13 +98,13 @@ body {
 .wrapper {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 0.8rem 1rem 1.2rem;
 }
 
 /* FILTERS */
 
 .filters {
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
@@ -107,32 +112,32 @@ body {
 
 .filters input {
   flex: 1 1 220px;
-  padding: 0.6rem 0.7rem;
+  padding: 0.6rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid var(--border-soft);
-  background: rgba(14, 18, 20, 0.9);
-  color: var(--text-main);
+  border: 1px solid rgba(100, 120, 100, 0.7);
+  background: rgba(5, 9, 7, 0.9);
+  color: var(--gold-text);
   font-size: 0.9rem;
   outline: none;
   transition: border 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 
 .filters input::placeholder {
-  color: var(--text-muted);
+  color: rgba(188, 165, 106, 0.7);
 }
 
 .filters input:focus {
-  border-color: var(--gold-soft);
-  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.3);
-  background: #101417;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
+  background: #050805;
 }
 
 /* STATUS */
 
 .status {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--gold-muted);
+  margin-bottom: 0.7rem;
 }
 
 /* GRID */
@@ -143,17 +148,18 @@ body {
   gap: 1rem;
 }
 
-/* CARD */
+/* KARTEN */
 
 .whisky-card {
-  background: radial-gradient(circle at top left, #1c3a31 0, var(--anthracite-soft) 40%, #101217 100%);
+  background:
+    linear-gradient(145deg, rgba(16, 30, 23, 0.96), rgba(6, 11, 8, 0.98));
   border-radius: 10px;
   padding: 0.7rem;
-  border: 1px solid rgba(77, 86, 98, 0.6);
+  border: 1px solid rgba(63, 81, 68, 0.8);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.65);
   position: relative;
   overflow: hidden;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border 0.18s ease;
@@ -163,14 +169,14 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.12), transparent 55%);
+  background: radial-gradient(circle at top right, rgba(212, 177, 90, 0.14), transparent 60%);
   pointer-events: none;
 }
 
 .whisky-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(212, 175, 55, 0.6);
-  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.7);
+  border-color: rgba(212, 177, 90, 0.6);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.8);
 }
 
 .whisky-card img {
@@ -178,10 +184,10 @@ body {
   height: 220px;
   object-fit: contain;
   border-radius: 8px;
-  background: radial-gradient(circle at center, #17261f, #07090b);
+  background: radial-gradient(circle at center, #111c14, #030504);
 }
 
-/* TEXT IN CARD */
+/* TEXT IN DER KARTE */
 
 .whisky-header {
   display: flex;
@@ -193,23 +199,24 @@ body {
 
 .whisky-name {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
+  color: var(--gold-main);
 }
 
 .whisky-price {
   font-size: 0.9rem;
-  color: var(--gold-soft);
+  color: var(--gold-text);
   white-space: nowrap;
 }
 
 .whisky-meta {
   font-size: 0.78rem;
-  color: var(--text-muted);
+  color: var(--gold-muted);
 }
 
 .whisky-desc {
   font-size: 0.85rem;
-  color: #d4dae5;
+  color: var(--gold-text);
 }
 
 /* BADGE */
@@ -217,15 +224,15 @@ body {
 .badge {
   align-self: flex-start;
   display: inline-block;
-  padding: 0.15rem 0.6rem;
+  padding: 0.16rem 0.6rem;
   border-radius: 999px;
-  border: 1px solid rgba(140, 148, 160, 0.8);
-  font-size: 0.7rem;
+  border: 1px solid rgba(114, 128, 112, 0.9);
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  background: rgba(5, 7, 8, 0.7);
-  margin-top: 0.2rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-muted);
+  background: rgba(5, 7, 6, 0.85);
+  margin-top: 0.15rem;
 }
 
 /* RESPONSIVE */
@@ -247,7 +254,7 @@ body {
   }
 
   .wrapper {
-    padding: 0.8rem;
+    padding: 0.6rem 0.8rem 1rem;
   }
 
   .whisky-card img {
