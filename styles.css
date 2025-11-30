@@ -230,4 +230,27 @@ body {
 
 /* RESPONSIVE */
 
-@media (max-width: 600px
+@media (max-width: 600px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand-text h1 {
+    font-size: 1.05rem;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 0.8rem;
+  }
+
+  .wrapper {
+    padding: 0.8rem;
+  }
+
+  .whisky-card img {
+    height: 190px;
+  }
+}
