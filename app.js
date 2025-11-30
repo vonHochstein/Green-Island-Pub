@@ -48,7 +48,7 @@ function renderWhiskies(list) {
     card.className = "whisky-card";
 
     const img = document.createElement("img");
-    img.src = w.image_url || "https://via.placeholder.com/400x220?text=Whisky";
+    img.src = w.image_url || "https://dummyimage.com/400x220/111111/ffffff&text=Whisky";
     img.alt = w.name || "Whisky";
 
     const header = document.createElement("div");
