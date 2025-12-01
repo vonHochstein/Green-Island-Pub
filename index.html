@@ -72,6 +72,31 @@
         <p id="detailMeta" class="detail-meta"></p>
         <p id="detailPrice" class="detail-price"></p>
         <p id="detailDescription" class="detail-description"></p>
+        
+        <div id="ratingSection" class="rating-section">
+          <div id="ratingStars" class="rating-stars">
+            <button type="button" data-value="1">★</button>
+            <button type="button" data-value="2">★</button>
+            <button type="button" data-value="3">★</button>
+            <button type="button" data-value="4">★</button>
+            <button type="button" data-value="5">★</button>
+          </div>
+        
+          <textarea
+            id="ratingNote"
+            class="rating-note"
+            rows="3"
+            placeholder="Deine persönliche Notiz zu diesem Whisky …"
+          ></textarea>
+        
+          <button type="button" id="ratingSave" class="rating-save">
+            Bewertung speichern
+          </button>
+        
+          <p id="ratingHint" class="rating-hint">
+            Bitte anmelden, um zu bewerten.
+          </p>
+        </div>
       </div>
     </article>
   </div>
