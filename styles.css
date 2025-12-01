@@ -44,6 +44,10 @@ body {
     linear-gradient(135deg, var(--green-deep), #020403);
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* HEADER – integriert in den Hintergrund, nicht abgesetzt */
 
 .site-header {
@@ -161,6 +165,39 @@ body {
   border-color: var(--gold-main);
   box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
   background: #050805;
+}
+
+.auth-bar {
+  margin-bottom: 0.7rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(5, 9, 7, 0.9);
+  border: 1px solid rgba(63, 81, 68, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--gold-muted);
+}
+
+.auth-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.auth-actions button {
+  border-radius: 999px;
+  border: 1px solid rgba(188, 165, 106, 0.7);
+  background: rgba(10, 15, 11, 0.95);
+  color: var(--gold-text);
+  font-size: 0.8rem;
+  padding: 0.28rem 0.7rem;
+  cursor: pointer;
+}
+
+.auth-actions button:hover {
+  border-color: var(--gold-main);
 }
 
 /* STATUS */
@@ -295,14 +332,16 @@ body {
 
 /* DETAIL-OVERLAY */
 
-.detail-overlay {
+.detail-overlay,
+.auth-overlay {
   position: fixed;
   inset: 0;
   z-index: 50;
   display: none; /* wird per JS auf block gesetzt */
 }
 
-.detail-overlay.is-visible {
+.detail-overlay.is-visible,
+.auth-overlay.is-visible {
   display: block;
 }
 
@@ -313,11 +352,13 @@ body {
   backdrop-filter: blur(3px);
 }
 
-.detail-panel {
+/* Panel-Design für Detail & Auth */
+.detail-panel,
+.auth-panel {
   position: relative;
-  max-width: 420px;           /* Auf großen Screens schön */
-  width: calc(100% - 2rem);   /* Links+rechts 1rem Abstand → kein Überstehen */
-  box-sizing: border-box;     /* Padding + Border werden eingerechnet */
+  max-width: 420px;
+  width: calc(100% - 2rem);
+  box-sizing: border-box;
   margin: 3.5rem auto 2rem;
   padding: 0.8rem 0.9rem 1rem;
   border-radius: 12px;
@@ -327,13 +368,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
-}
-
-@media (max-width: 600px) {
-  .detail-panel {
-    margin: 2.5rem auto 1.5rem;
-    width: calc(100% - 1.4rem);
-  }
 }
 
 .detail-close {
@@ -350,6 +384,14 @@ body {
 
 .detail-close:hover {
   color: var(--gold-text);
+}
+
+@media (max-width: 600px) {
+  .detail-panel,
+  .auth-panel {
+    margin: 2.5rem auto 1.5rem;
+    width: calc(100% - 1.4rem);
+  }
 }
 
 .detail-image-wrapper {
@@ -391,6 +433,92 @@ body {
   margin: 0;
   font-size: 0.9rem;
   color: var(--gold-text);
+}
+
+.auth-panel h2 {
+  margin: 0.2rem 0 0.2rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold-main);
+}
+
+.auth-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--gold-muted);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.4rem;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  color: var(--gold-text);
+}
+
+.auth-field input {
+  margin-top: 0.18rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 120, 100, 0.7);
+  background: rgba(5, 9, 7, 0.9);
+  color: var(--gold-text);
+  font-size: 0.85rem;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
+}
+
+.auth-submit {
+  margin-top: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(188, 165, 106, 0.8);
+  background: rgba(10, 15, 11, 0.98);
+  color: var(--gold-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.auth-submit:hover {
+  border-color: var(--gold-main);
+}
+
+.auth-switch {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.auth-link {
+  border: none;
+  background: transparent;
+  color: var(--gold-muted);
+  font-size: 0.78rem;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.auth-link:hover {
+  color: var(--gold-text);
+}
+
+.auth-message {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  min-height: 1.2em;
 }
 
 /* Mobile Anpassung */
