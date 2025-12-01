@@ -13,6 +13,7 @@ const statusEl = document.getElementById("status");
 const searchInput = document.getElementById("searchInput");
 const sortSelect = document.getElementById("sortSelect");
 
+// Detail-Overlay
 const detailOverlay = document.getElementById("detailOverlay");
 const detailBackdrop = document.getElementById("detailBackdrop");
 const detailClose = document.getElementById("detailClose");
@@ -22,8 +23,206 @@ const detailMeta = document.getElementById("detailMeta");
 const detailPrice = document.getElementById("detailPrice");
 const detailDescription = document.getElementById("detailDescription");
 
+// Auth-Bar & Overlay
+const authBar = document.getElementById("authBar");
+const authStatus = document.getElementById("authStatus");
+const loginButton = document.getElementById("loginButton");
+const logoutButton = document.getElementById("logoutButton");
+
+const authOverlay = document.getElementById("authOverlay");
+const authBackdrop = document.getElementById("authBackdrop");
+const authClose = document.getElementById("authClose");
+const authTitle = document.getElementById("authTitle");
+const authHint = document.getElementById("authHint");
+const authForm = document.getElementById("authForm");
+const authDisplayName = document.getElementById("authDisplayName");
+const authEmail = document.getElementById("authEmail");
+const authPassword = document.getElementById("authPassword");
+const authSubmit = document.getElementById("authSubmit");
+const switchToRegister = document.getElementById("switchToRegister");
+const switchToLogin = document.getElementById("switchToLogin");
+const authMessage = document.getElementById("authMessage");
+
+// Zustand
 let allWhiskies = [];
 let currentSort = "name_asc";
+
+let currentUser = null;
+let authMode = "login"; // "login" oder "register"
+const LS_USER_KEY = "gi_current_user";
+
+// --- Auth-Helfer ---
+
+function setCurrentUser(user) {
+  currentUser = user;
+  if (user) {
+    const store = {
+      id: user.id,
+      email: user.email,
+      display_name: user.display_name,
+    };
+    localStorage.setItem(LS_USER_KEY, JSON.stringify(store));
+  } else {
+    localStorage.removeItem(LS_USER_KEY);
+  }
+  updateAuthUI();
+}
+
+function loadUserFromStorage() {
+  const raw = localStorage.getItem(LS_USER_KEY);
+  if (!raw) {
+    currentUser = null;
+    updateAuthUI();
+    return;
+  }
+  try {
+    currentUser = JSON.parse(raw);
+  } catch {
+    currentUser = null;
+  }
+  updateAuthUI();
+}
+
+function updateAuthUI() {
+  if (!authStatus) return;
+
+  if (currentUser) {
+    authStatus.textContent =
+      "Angemeldet als: " +
+      (currentUser.display_name || currentUser.email || "Unbekannt");
+    if (loginButton) loginButton.classList.add("hidden");
+    if (logoutButton) logoutButton.classList.remove("hidden");
+  } else {
+    authStatus.textContent = "Als Gast unterwegs";
+    if (loginButton) loginButton.classList.remove("hidden");
+    if (logoutButton) logoutButton.classList.add("hidden");
+  }
+}
+
+function openAuthOverlay(mode) {
+  if (!authOverlay) return;
+
+  authMode = mode;
+  authMessage.textContent = "";
+  authEmail.value = "";
+  authPassword.value = "";
+  authDisplayName.value = "";
+
+  if (mode === "login") {
+    authTitle.textContent = "Anmelden";
+    authHint.textContent =
+      "Melde dich mit deiner E-Mail und deinem Passwort an.";
+    authDisplayName.parentElement.classList.add("hidden");
+    authSubmit.textContent = "Anmelden";
+    switchToLogin.classList.add("hidden");
+    switchToRegister.classList.remove("hidden");
+  } else {
+    authTitle.textContent = "Registrieren";
+    authHint.textContent =
+      "Lege ein Konto an, um deine verkosteten Whiskys zu speichern.";
+    authDisplayName.parentElement.classList.remove("hidden");
+    authSubmit.textContent = "Registrieren";
+    switchToLogin.classList.remove("hidden");
+    switchToRegister.classList.add("hidden");
+  }
+
+  authOverlay.classList.add("is-visible");
+  authOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closeAuthOverlay() {
+  if (!authOverlay) return;
+  authOverlay.classList.remove("is-visible");
+  authOverlay.setAttribute("aria-hidden", "true");
+}
+
+async function handleAuthSubmit(event) {
+  event.preventDefault();
+  if (!authEmail || !authPassword) return;
+
+  const email = authEmail.value.trim().toLowerCase();
+  const password = authPassword.value.trim();
+  const displayName = authDisplayName.value.trim();
+
+  if (!email || !password) {
+    authMessage.textContent = "Bitte E-Mail und Passwort eingeben.";
+    return;
+  }
+
+  if (authMode === "register" && !displayName) {
+    authMessage.textContent = "Bitte einen Anzeigenamen angeben.";
+    return;
+  }
+
+  authMessage.textContent = "Bitte warten …";
+
+  try {
+    if (authMode === "register") {
+      const { data, error } = await supabaseClient
+        .from("users_green_island")
+        .insert([
+          {
+            email,
+            password_hash: password, // später durch echten Hash ersetzen
+            display_name: displayName,
+          },
+        ])
+        .select("*");
+
+      if (error) {
+        console.error(error);
+        if (
+          error.message &&
+          error.message.toLowerCase().includes("duplicate")
+        ) {
+          authMessage.textContent =
+            "Für diese E-Mail existiert bereits ein Konto.";
+        } else {
+          authMessage.textContent =
+            "Registrierung fehlgeschlagen. Bitte später erneut versuchen.";
+        }
+        return;
+      }
+
+      const user = data && data[0];
+      if (!user) {
+        authMessage.textContent =
+          "Registrierung fehlgeschlagen. Bitte später erneut versuchen.";
+        return;
+      }
+
+      setCurrentUser(user);
+      closeAuthOverlay();
+    } else {
+      const { data, error } = await supabaseClient
+        .from("users_green_island")
+        .select("*")
+        .eq("email", email)
+        .eq("password_hash", password)
+        .limit(1);
+
+      if (error) {
+        console.error(error);
+        authMessage.textContent =
+          "Anmeldung fehlgeschlagen. Bitte später erneut versuchen.";
+        return;
+      }
+
+      const user = data && data[0];
+      if (!user) {
+        authMessage.textContent = "E-Mail oder Passwort ist falsch.";
+        return;
+      }
+
+      setCurrentUser(user);
+      closeAuthOverlay();
+    }
+  } catch (err) {
+    console.error(err);
+    authMessage.textContent =
+      "Unerwarteter Fehler. Bitte später erneut versuchen.";
+  }
+}
 
 // 3. Whiskys laden
 async function loadWhiskies() {
@@ -204,6 +403,8 @@ function updateView() {
 }
 
 // 6. Event Listener
+
+// Suche & Sortierung
 if (searchInput) {
   searchInput.addEventListener("input", () => {
     updateView();
@@ -216,6 +417,7 @@ if (sortSelect) {
   });
 }
 
+// Detail-Overlay schließen
 if (detailClose) {
   detailClose.addEventListener("click", () => {
     closeDetail();
@@ -228,11 +430,55 @@ if (detailBackdrop) {
   });
 }
 
+// Auth-Events
+if (loginButton) {
+  loginButton.addEventListener("click", () => {
+    openAuthOverlay("login");
+  });
+}
+
+if (logoutButton) {
+  logoutButton.addEventListener("click", () => {
+    setCurrentUser(null);
+  });
+}
+
+if (authClose) {
+  authClose.addEventListener("click", () => {
+    closeAuthOverlay();
+  });
+}
+
+if (authBackdrop) {
+  authBackdrop.addEventListener("click", () => {
+    closeAuthOverlay();
+  });
+}
+
+if (switchToRegister) {
+  switchToRegister.addEventListener("click", () => {
+    openAuthOverlay("register");
+  });
+}
+
+if (switchToLogin) {
+  switchToLogin.addEventListener("click", () => {
+    openAuthOverlay("login");
+  });
+}
+
+if (authForm) {
+  authForm.addEventListener("submit", handleAuthSubmit);
+}
+
+// ESC-Taste: beide Overlays schließen
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeDetail();
+    closeAuthOverlay();
   }
 });
 
 // 7. Start
+loadUserFromStorage();
 loadWhiskies();
