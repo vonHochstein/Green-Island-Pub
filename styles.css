@@ -435,6 +435,81 @@ body {
   color: var(--gold-text);
 }
 
+.rating-section {
+  margin-top: 0.4rem;
+  border-top: 1px solid rgba(80, 96, 84, 0.8);
+  padding-top: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.rating-stars button {
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0.05rem 0.15rem;
+  color: rgba(140, 120, 80, 0.6); /* inaktiv: mattes Gold */
+}
+
+.rating-stars button.is-active {
+  color: var(--gold-main); /* aktiver Stern */
+}
+
+.rating-stars button:focus {
+  outline: none;
+}
+
+.rating-note {
+  width: 100%;
+  min-height: 3.2rem;
+  resize: vertical;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 120, 100, 0.7);
+  background: rgba(5, 9, 7, 0.9);
+  color: var(--gold-text);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.rating-note::placeholder {
+  color: rgba(188, 165, 106, 0.7);
+}
+
+.rating-note:focus {
+  outline: none;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
+}
+
+.rating-save {
+  align-self: flex-start;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(188, 165, 106, 0.8);
+  background: rgba(10, 15, 11, 0.98);
+  color: var(--gold-text);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.rating-save:hover {
+  border-color: var(--gold-main);
+}
+
+.rating-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--gold-muted);
+}
+
 .auth-panel h2 {
   margin: 0.2rem 0 0.2rem;
   font-size: 1.1rem;
