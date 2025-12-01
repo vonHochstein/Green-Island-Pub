@@ -287,6 +287,12 @@ body {
   color: var(--gold-text);
 }
 
+.whisky-rating-summary {
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--gold-muted);
+}
+
 /* BADGE */
 
 .badge {
