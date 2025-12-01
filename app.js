@@ -196,6 +196,13 @@ function updateView() {
   renderWhiskies(list);
 }
 
+    // Klick auf die Karte öffnet die Detailansicht
+    card.addEventListener("click", () => {
+      openDetail(w);
+    });
+
+    whiskyGrid.appendChild(card);
+
 // 6. Event Listener
 if (searchInput) {
   searchInput.addEventListener("input", () => {
@@ -209,5 +216,23 @@ if (sortSelect) {
   });
 }
 
+if (detailClose) {
+  detailClose.addEventListener("click", () => {
+    closeDetail();
+  });
+}
+
+if (detailBackdrop) {
+  detailBackdrop.addEventListener("click", () => {
+    closeDetail();
+  });
+}
+
+// ESC-Taste schließt ebenfalls
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeDetail();
+  }
+});
 // 7. Start – jetzt wirklich aus Supabase laden
 loadWhiskies();
