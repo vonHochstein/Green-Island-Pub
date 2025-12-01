@@ -2,7 +2,8 @@
 
 // 1. Supabase-Konfiguration – HIER deine Daten eintragen
 const SUPABASE_URL = "https://lnbjukymvazrpveyqlsd.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuYmp1a3ltdmF6cnB2ZXlxbHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjQyNjUsImV4cCI6MjA4MDAwMDI2NX0.owwhm0To_GQYlSXbaXc0TMsbAbNxOLeA2SAnRQERnCk";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuYmp1a3ltdmF6cnB2ZXlxbHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjQyNjUsImV4cCI6MjA4MDAwMDI2NX0.owwhm0To_GQYlSXbaXc0TMsbAbNxOLeA2SAnRQERnCk";
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -26,6 +27,8 @@ let currentSort = "name_asc";
 
 // 3. Whiskys laden
 async function loadWhiskies() {
+  if (!statusEl) return;
+
   statusEl.textContent = "Lade Whiskys …";
 
   const { data, error } = await supabaseClient
@@ -43,12 +46,13 @@ async function loadWhiskies() {
   allWhiskies = data || [];
   statusEl.textContent = `${allWhiskies.length} Whisky(s) in der Demo geladen.`;
 
-  // Alles über updateView laufen lassen
   updateView();
 }
 
 // 4. Whiskys rendern
 function renderWhiskies(list) {
+  if (!whiskyGrid) return;
+
   whiskyGrid.innerHTML = "";
 
   if (!list.length) {
@@ -61,7 +65,9 @@ function renderWhiskies(list) {
     card.className = "whisky-card";
 
     const img = document.createElement("img");
-    img.src = w.image_url || "https://dummyimage.com/400x220/111111/ffffff&text=Whisky";
+    img.src =
+      w.image_url ||
+      "https://dummyimage.com/400x220/111111/ffffff&text=Whisky";
     img.alt = w.name || "Whisky";
 
     const header = document.createElement("div");
@@ -91,7 +97,8 @@ function renderWhiskies(list) {
 
     const desc = document.createElement("div");
     desc.className = "whisky-desc";
-    desc.textContent = w.description || "Noch keine Beschreibung hinterlegt.";
+    desc.textContent =
+      w.description || "Noch keine Beschreibung hinterlegt.";
 
     const badge = document.createElement("span");
     badge.className = "badge";
@@ -116,14 +123,13 @@ function renderWhiskies(list) {
 function openDetail(w) {
   if (!detailOverlay) return;
 
-  // Bild
-  detailImage.src = w.image_url || "https://dummyimage.com/400x260/111111/ffffff&text=Whisky";
+  detailImage.src =
+    w.image_url ||
+    "https://dummyimage.com/400x260/111111/ffffff&text=Whisky";
   detailImage.alt = w.name || "Whisky";
 
-  // Name
   detailName.textContent = w.name || "Unbekannter Whisky";
 
-  // Meta (Destillerie, Land, Stil, Vol%)
   const parts = [];
   if (w.distillery) parts.push(w.distillery);
   if (w.origin_country) parts.push(w.origin_country);
@@ -131,16 +137,15 @@ function openDetail(w) {
   if (w.abv != null) parts.push(`${w.abv}% Vol.`);
   detailMeta.textContent = parts.join(" · ") || "Keine weiteren Angaben";
 
-  // Preis
   if (w.price_eur != null) {
     detailPrice.textContent = `Preis im Pub: ${w.price_eur.toFixed(2)} €`;
   } else {
     detailPrice.textContent = "";
   }
 
-  // Beschreibung
   detailDescription.textContent =
-    w.description || "Für diesen Whisky liegt noch keine Beschreibung vor.";
+    w.description ||
+    "Für diesen Whisky liegt noch keine Beschreibung vor.";
 
   detailOverlay.classList.add("is-visible");
   detailOverlay.setAttribute("aria-hidden", "false");
@@ -157,10 +162,8 @@ function updateView() {
   const q = (searchInput?.value || "").toLowerCase().trim();
   currentSort = sortSelect ? sortSelect.value : "name_asc";
 
-  // 1. Kopie der Daten für Sortierung
   let list = [...allWhiskies];
 
-  // 2. Sortierung anwenden
   list.sort((a, b) => {
     switch (currentSort) {
       case "name_asc":
@@ -180,7 +183,6 @@ function updateView() {
     }
   });
 
-  // 3. Filter nach Suchtext
   if (q) {
     list = list.filter((w) => {
       const haystack = [
@@ -188,7 +190,7 @@ function updateView() {
         w.distillery,
         w.origin_country,
         w.style,
-        w.description
+        w.description,
       ]
         .filter(Boolean)
         .join(" ")
@@ -198,7 +200,6 @@ function updateView() {
     });
   }
 
-  // 4. Rendern
   renderWhiskies(list);
 }
 
@@ -227,12 +228,11 @@ if (detailBackdrop) {
   });
 }
 
-// ESC-Taste schließt ebenfalls
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeDetail();
   }
 });
 
-// 7. Start – jetzt wirklich aus Supabase laden
+// 7. Start
 loadWhiskies();
