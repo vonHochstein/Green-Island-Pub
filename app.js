@@ -10,8 +10,10 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const whiskyGrid = document.getElementById("whiskyGrid");
 const statusEl = document.getElementById("status");
 const searchInput = document.getElementById("searchInput");
+const sortSelect = document.getElementById("sortSelect");
 
 let allWhiskies = [];
+let currentSort = "name_asc";
 
 // 3. Whiskys laden
 async function loadWhiskies() {
@@ -95,36 +97,65 @@ function renderWhiskies(list) {
 }
 
 // 5. Suchfunktion
-function applyFilter() {
+function updateView() {
   const q = (searchInput.value || "").toLowerCase().trim();
+  currentSort = sortSelect ? sortSelect.value : "name_asc";
 
-  if (!q) {
-    renderWhiskies(allWhiskies);
-    return;
-  }
+  // 1. Kopie der Daten für Sortierung
+  let list = [...allWhiskies];
 
-  const filtered = allWhiskies.filter((w) => {
-    const haystack = [
-      w.name,
-      w.distillery,
-      w.origin_country,
-      w.style,
-      w.description
-    ]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-
-    return haystack.includes(q);
+  // 2. Sortierung anwenden
+  list.sort((a, b) => {
+    switch (currentSort) {
+      case "name_asc":
+        return (a.name || "").localeCompare(b.name || "");
+      case "name_desc":
+        return (b.name || "").localeCompare(a.name || "");
+      case "price_asc":
+        return (a.price_eur ?? 999999) - (b.price_eur ?? 999999);
+      case "price_desc":
+        return (b.price_eur ?? -1) - (a.price_eur ?? -1);
+      case "abv_asc":
+        return (a.abv ?? 0) - (b.abv ?? 0);
+      case "abv_desc":
+        return (b.abv ?? 0) - (a.abv ?? 0);
+      default:
+        return 0;
+    }
   });
 
-  renderWhiskies(filtered);
+  // 3. Filter nach Suchtext
+  if (q) {
+    list = list.filter((w) => {
+      const haystack = [
+        w.name,
+        w.distillery,
+        w.origin_country,
+        w.style,
+        w.description
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(q);
+    });
+  }
+
+  // 4. Rendern
+  renderWhiskies(list);
 }
 
 // 6. Event Listener
 searchInput.addEventListener("input", () => {
-  applyFilter();
+  updateView();
 });
 
+if (sortSelect) {
+  sortSelect.addEventListener("change", () => {
+    updateView();
+  });
+}
+
 // 7. Start
-loadWhiskies();
+updateView();
