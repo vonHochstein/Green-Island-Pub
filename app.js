@@ -12,6 +12,15 @@ const statusEl = document.getElementById("status");
 const searchInput = document.getElementById("searchInput");
 const sortSelect = document.getElementById("sortSelect");
 
+const detailOverlay = document.getElementById("detailOverlay");
+const detailBackdrop = document.getElementById("detailBackdrop");
+const detailClose = document.getElementById("detailClose");
+const detailImage = document.getElementById("detailImage");
+const detailName = document.getElementById("detailName");
+const detailMeta = document.getElementById("detailMeta");
+const detailPrice = document.getElementById("detailPrice");
+const detailDescription = document.getElementById("detailDescription");
+
 let allWhiskies = [];
 let currentSort = "name_asc";
 
@@ -96,6 +105,45 @@ function renderWhiskies(list) {
 
     whiskyGrid.appendChild(card);
   }
+}
+
+function openDetail(w) {
+  if (!detailOverlay) return;
+
+  // Bild
+  detailImage.src = w.image_url || "https://dummyimage.com/400x260/111111/ffffff&text=Whisky";
+  detailImage.alt = w.name || "Whisky";
+
+  // Name
+  detailName.textContent = w.name || "Unbekannter Whisky";
+
+  // Meta (Destillerie, Land, Stil, Vol%)
+  const parts = [];
+  if (w.distillery) parts.push(w.distillery);
+  if (w.origin_country) parts.push(w.origin_country);
+  if (w.style) parts.push(w.style);
+  if (w.abv != null) parts.push(`${w.abv}% Vol.`);
+  detailMeta.textContent = parts.join(" · ") || "Keine weiteren Angaben";
+
+  // Preis
+  if (w.price_eur != null) {
+    detailPrice.textContent = `Preis im Pub: ${w.price_eur.toFixed(2)} €`;
+  } else {
+    detailPrice.textContent = "";
+  }
+
+  // Beschreibung
+  detailDescription.textContent =
+    w.description || "Für diesen Whisky liegt noch keine Beschreibung vor.";
+
+  detailOverlay.classList.add("is-visible");
+  detailOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closeDetail() {
+  if (!detailOverlay) return;
+  detailOverlay.classList.remove("is-visible");
+  detailOverlay.setAttribute("aria-hidden", "true");
 }
 
 // 5. Suche + Sortierung
