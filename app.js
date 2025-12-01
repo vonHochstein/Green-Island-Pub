@@ -7,6 +7,14 @@ const SUPABASE_ANON_KEY =
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function renderStars(value) {
+  const v = Number(value) || 0;
+  if (!v) return "–";
+  const full = "★".repeat(Math.min(5, v));
+  const empty = "☆".repeat(Math.max(0, 5 - v));
+  return full + empty;
+}
+
 // 2. DOM-Elemente
 const whiskyGrid = document.getElementById("whiskyGrid");
 const statusEl = document.getElementById("status");
@@ -62,6 +70,10 @@ let currentWhisky = null;
 let currentRatingValue = 0;
 let currentRatingNote = "";
 
+// Rating-Übersichten
+let ratingStatsByWhisky = {}; // whisky_id -> { sum, count, avg }
+let myRatingsByWhisky = {};   // whisky_id -> meine Sterne
+
 // --- Auth-Helfer ---
 
 function setCurrentUser(user) {
@@ -110,6 +122,7 @@ function updateAuthUI() {
   }
     // Rating-Sektion ggf. neu konfigurieren
   refreshRatingSection();
+  loadRatingStats();
 }
 
 function openAuthOverlay(mode) {
@@ -378,6 +391,58 @@ async function saveCurrentRating() {
   } catch (err) {
     console.error(err);
     ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
+    // Durchschnitt & eigene Bewertung aktualisieren
+    loadRatingStats();
+  }
+}
+
+async function loadRatingStats() {
+  try {
+    const { data, error } = await supabaseClient
+      .from("ratings_green_island")
+      .select("whisky_id, user_id, rating");
+
+    if (error) {
+      console.error(error);
+      ratingStatsByWhisky = {};
+      myRatingsByWhisky = {};
+      return;
+    }
+
+    const stats = {};
+    const mine = {};
+
+    if (data) {
+      for (const row of data) {
+        const wid = row.whisky_id;
+        const r = Number(row.rating) || 0;
+        if (!wid || !r) continue;
+
+        // Durchschnitt für alle
+        if (!stats[wid]) stats[wid] = { sum: 0, count: 0, avg: 0 };
+        stats[wid].sum += r;
+        stats[wid].count += 1;
+
+        // Meine Bewertung
+        if (currentUser && row.user_id === currentUser.id) {
+          mine[wid] = r;
+        }
+      }
+
+      // Ø ausrechnen
+      for (const wid in stats) {
+        const s = stats[wid];
+        s.avg = s.count > 0 ? s.sum / s.count : 0;
+      }
+    }
+
+    ratingStatsByWhisky = stats;
+    myRatingsByWhisky = mine;
+
+    // Liste mit neuen Daten neu zeichnen
+    updateView();
+  } catch (err) {
+    console.error(err);
   }
 }
 
@@ -403,6 +468,7 @@ async function loadWhiskies() {
   statusEl.textContent = `${allWhiskies.length} Whisky(s) in der Demo geladen.`;
 
   updateView();
+  loadRatingStats();
 }
 
 // 4. Whiskys rendern
@@ -465,6 +531,32 @@ function renderWhiskies(list) {
     card.appendChild(meta);
     card.appendChild(desc);
     card.appendChild(badge);
+    
+    // Bewertungs-Zeile
+    const ratingSummary = document.createElement("div");
+    ratingSummary.className = "whisky-rating-summary";
+
+    const stats = ratingStatsByWhisky[w.id];
+    const myRating = myRatingsByWhisky[w.id];
+
+    const parts = [];
+
+    if (stats && stats.count > 0) {
+      const avgRounded = Math.round(stats.avg * 10) / 10;
+      parts.push(`Ø ${avgRounded.toFixed(1)} (${stats.count})`);
+    }
+
+    if (currentUser && myRating) {
+      parts.push(`Deine Bewertung: ${renderStars(myRating)}`);
+    }
+
+    if (!parts.length) {
+      ratingSummary.textContent = "Noch keine Bewertungen.";
+    } else {
+      ratingSummary.textContent = parts.join(" · ");
+    }
+
+    card.appendChild(ratingSummary);
 
     // Klick auf die Karte öffnet die Detailansicht
     card.addEventListener("click", () => {
