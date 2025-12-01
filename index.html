@@ -45,6 +45,26 @@
     <section id="whiskyGrid" class="whisky-grid">
       <!-- Karten werden per JS eingefügt -->
     </section>
+    
+    <!-- Detail-Overlay für einzelnen Whisky -->
+    <div id="detailOverlay" class="detail-overlay" aria-hidden="true">
+      <div class="detail-backdrop" id="detailBackdrop"></div>
+    
+      <article class="detail-panel">
+        <button class="detail-close" id="detailClose" aria-label="Schließen">×</button>
+    
+        <div class="detail-image-wrapper">
+          <img id="detailImage" src="" alt="Whisky" />
+        </div>
+    
+        <div class="detail-content">
+          <h2 id="detailName"></h2>
+          <p id="detailMeta" class="detail-meta"></p>
+          <p id="detailPrice" class="detail-price"></p>
+          <p id="detailDescription" class="detail-description"></p>
+        </div>
+      </article>
+    </div>
   </main>
 
   <!-- Supabase UMD Build -->
