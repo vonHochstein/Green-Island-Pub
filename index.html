@@ -27,7 +27,7 @@
         type="text"
         placeholder="Suche nach Name, Destillerie, Stil, Land …"
       />
-    
+
       <select id="sortSelect">
         <option value="name_asc">Name A–Z</option>
         <option value="name_desc">Name Z–A</option>
@@ -45,27 +45,27 @@
     <section id="whiskyGrid" class="whisky-grid">
       <!-- Karten werden per JS eingefügt -->
     </section>
-    
-    <!-- Detail-Overlay für einzelnen Whisky -->
-    <div id="detailOverlay" class="detail-overlay" aria-hidden="true">
-      <div class="detail-backdrop" id="detailBackdrop"></div>
-    
-      <article class="detail-panel">
-        <button class="detail-close" id="detailClose" aria-label="Schließen">×</button>
-    
-        <div class="detail-image-wrapper">
-          <img id="detailImage" src="" alt="Whisky" />
-        </div>
-    
-        <div class="detail-content">
-          <h2 id="detailName"></h2>
-          <p id="detailMeta" class="detail-meta"></p>
-          <p id="detailPrice" class="detail-price"></p>
-          <p id="detailDescription" class="detail-description"></p>
-        </div>
-      </article>
-    </div>
   </main>
+
+  <!-- Detail-Overlay für einzelnen Whisky -->
+  <div id="detailOverlay" class="detail-overlay" aria-hidden="true">
+    <div class="detail-backdrop" id="detailBackdrop"></div>
+
+    <article class="detail-panel">
+      <button class="detail-close" id="detailClose" aria-label="Schließen">×</button>
+
+      <div class="detail-image-wrapper">
+        <img id="detailImage" src="" alt="Whisky" />
+      </div>
+
+      <div class="detail-content">
+        <h2 id="detailName"></h2>
+        <p id="detailMeta" class="detail-meta"></p>
+        <p id="detailPrice" class="detail-price"></p>
+        <p id="detailDescription" class="detail-description"></p>
+      </div>
+    </article>
+  </div>
 
   <!-- Supabase UMD Build -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
