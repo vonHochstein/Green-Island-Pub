@@ -315,8 +315,9 @@ body {
 
 .detail-panel {
   position: relative;
-  max-width: 420px;
-  width: 100%;
+  max-width: 420px;           /* Auf großen Screens schön */
+  width: calc(100% - 2rem);   /* Links+rechts 1rem Abstand → kein Überstehen */
+  box-sizing: border-box;     /* Padding + Border werden eingerechnet */
   margin: 3.5rem auto 2rem;
   padding: 0.8rem 0.9rem 1rem;
   border-radius: 12px;
@@ -326,6 +327,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
+}
+
+@media (max-width: 600px) {
+  .detail-panel {
+    margin: 2.5rem auto 1.5rem;
+    width: calc(100% - 1.4rem);
+  }
 }
 
 .detail-close {
