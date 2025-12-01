@@ -33,7 +33,9 @@ async function loadWhiskies() {
 
   allWhiskies = data || [];
   statusEl.textContent = `${allWhiskies.length} Whisky(s) in der Demo geladen.`;
-  renderWhiskies(allWhiskies);
+
+  // Statt direkt renderWhiskies → alles über updateView laufen lassen
+  updateView();
 }
 
 // 4. Whiskys rendern
@@ -96,7 +98,7 @@ function renderWhiskies(list) {
   }
 }
 
-// 5. Suchfunktion
+// 5. Suche + Sortierung
 function updateView() {
   const q = (searchInput.value || "").toLowerCase().trim();
   currentSort = sortSelect ? sortSelect.value : "name_asc";
@@ -147,9 +149,11 @@ function updateView() {
 }
 
 // 6. Event Listener
-searchInput.addEventListener("input", () => {
-  updateView();
-});
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    updateView();
+  });
+}
 
 if (sortSelect) {
   sortSelect.addEventListener("change", () => {
@@ -157,5 +161,5 @@ if (sortSelect) {
   });
 }
 
-// 7. Start
-updateView();
+// 7. Start – jetzt wirklich aus Supabase laden
+loadWhiskies();
