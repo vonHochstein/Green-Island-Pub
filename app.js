@@ -108,6 +108,8 @@ function updateAuthUI() {
     if (loginButton) loginButton.classList.remove("hidden");
     if (logoutButton) logoutButton.classList.add("hidden");
   }
+    // Rating-Sektion ggf. neu konfigurieren
+  refreshRatingSection();
 }
 
 function openAuthOverlay(mode) {
@@ -235,6 +237,150 @@ async function handleAuthSubmit(event) {
   }
 }
 
+function setRatingUI(value, note) {
+  currentRatingValue = value || 0;
+  currentRatingNote = note || "";
+
+  if (ratingStars) {
+    const buttons = ratingStars.querySelectorAll("button[data-value]");
+    buttons.forEach((btn) => {
+      const v = Number(btn.getAttribute("data-value"));
+      btn.classList.toggle("is-active", v <= currentRatingValue);
+    });
+  }
+
+  if (ratingNote) {
+    ratingNote.value = currentRatingNote;
+  }
+}
+
+function refreshRatingSection() {
+  if (!ratingSection || !ratingHint) return;
+
+  if (!currentUser) {
+    // Gast: Sterne deaktiviert, Notizfeld & Button „tot“
+    if (ratingStars) {
+      const buttons = ratingStars.querySelectorAll("button[data-value]");
+      buttons.forEach((btn) => {
+        btn.disabled = true;
+        btn.classList.remove("is-active");
+      });
+    }
+    if (ratingNote) {
+      ratingNote.disabled = true;
+      ratingNote.value = "";
+    }
+    if (ratingSave) {
+      ratingSave.disabled = true;
+    }
+    ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
+  } else {
+    // Eingeloggt: UI aktivieren
+    if (ratingStars) {
+      const buttons = ratingStars.querySelectorAll("button[data-value]");
+      buttons.forEach((btn) => {
+        btn.disabled = false;
+      });
+    }
+    if (ratingNote) {
+      ratingNote.disabled = false;
+    }
+    if (ratingSave) {
+      ratingSave.disabled = false;
+    }
+
+    // Wenn ein Whisky aktiv ist, holen wir die gespeicherte Bewertung
+    if (currentWhisky) {
+      loadCurrentUserRatingForCurrentWhisky();
+    } else {
+      setRatingUI(0, "");
+      ratingHint.textContent = "Gib deine persönliche Bewertung ab.";
+    }
+  }
+}
+
+async function loadCurrentUserRatingForCurrentWhisky() {
+  if (!currentUser || !currentWhisky) return;
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("ratings_green_island")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .eq("whisky_id", currentWhisky.id)
+      .limit(1);
+
+    if (error) {
+      console.error(error);
+      setRatingUI(0, "");
+      ratingHint.textContent = "Bewertung konnte nicht geladen werden.";
+      return;
+    }
+
+    const rating = data && data[0];
+    if (rating) {
+      setRatingUI(rating.rating || 0, rating.notes || "");
+      ratingHint.textContent = "Deine gespeicherte Bewertung.";
+    } else {
+      setRatingUI(0, "");
+      ratingHint.textContent = "Gib deine persönliche Bewertung ab.";
+    }
+  } catch (err) {
+    console.error(err);
+    setRatingUI(0, "");
+    ratingHint.textContent = "Bewertung konnte nicht geladen werden.";
+  }
+}
+
+async function saveCurrentRating() {
+  if (!currentUser || !currentWhisky) {
+    if (ratingHint) {
+      ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
+    }
+    return;
+  }
+
+  // Note aus dem Textfeld holen
+  if (ratingNote) {
+    currentRatingNote = ratingNote.value.trim();
+  }
+
+  if (!currentRatingValue) {
+    ratingHint.textContent = "Bitte mindestens einen Stern vergeben.";
+    return;
+  }
+
+  try {
+    ratingHint.textContent = "Speichere Bewertung …";
+
+    const { error } = await supabaseClient
+      .from("ratings_green_island")
+      .upsert(
+        {
+          user_id: currentUser.id,
+          whisky_id: currentWhisky.id,
+          rating: currentRatingValue,
+          notes: currentRatingNote,
+        },
+        {
+          onConflict: "user_id,whisky_id",
+        }
+      );
+
+    if (error) {
+      console.error(error);
+      ratingHint.textContent =
+        "Bewertung konnte nicht gespeichert werden.";
+      return;
+    }
+
+    ratingHint.textContent = "Bewertung gespeichert.";
+  } catch (err) {
+    console.error(err);
+    ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
+  }
+}
+
 // 3. Whiskys laden
 async function loadWhiskies() {
   if (!statusEl) return;
@@ -332,6 +478,8 @@ function renderWhiskies(list) {
 // Detail öffnen/schließen
 function openDetail(w) {
   if (!detailOverlay) return;
+  
+  currentWhisky = w;
 
   detailImage.src =
     w.image_url ||
@@ -357,6 +505,16 @@ function openDetail(w) {
     w.description ||
     "Für diesen Whisky liegt noch keine Beschreibung vor.";
 
+  // Rating-UI aktualisieren
+  setRatingUI(0, "");
+  if (currentUser) {
+    refreshRatingSection();
+  } else {
+    if (ratingSection && ratingHint) {
+      refreshRatingSection();
+    }
+  }
+
   detailOverlay.classList.add("is-visible");
   detailOverlay.setAttribute("aria-hidden", "false");
 }
@@ -365,6 +523,8 @@ function closeDetail() {
   if (!detailOverlay) return;
   detailOverlay.classList.remove("is-visible");
   detailOverlay.setAttribute("aria-hidden", "true");
+  currentWhisky = null;
+  setRatingUI(0, "");
 }
 
 // 5. Suche + Sortierung
@@ -489,6 +649,36 @@ document.addEventListener("keydown", (event) => {
     closeAuthOverlay();
   }
 });
+
+// Sterne-Klick
+if (ratingStars) {
+  ratingStars.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const value = Number(target.getAttribute("data-value"));
+    if (!value) return;
+
+    if (!currentUser) {
+      if (ratingHint) {
+        ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
+      }
+      return;
+    }
+    if (!currentWhisky) return;
+
+    setRatingUI(value, ratingNote ? ratingNote.value : currentRatingNote);
+    if (ratingHint) {
+      ratingHint.textContent = "Bewertung noch nicht gespeichert.";
+    }
+  });
+}
+
+// Speichern-Klick
+if (ratingSave) {
+  ratingSave.addEventListener("click", () => {
+    saveCurrentRating();
+  });
+}
 
 // 7. Start
 loadUserFromStorage();
