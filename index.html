@@ -21,6 +21,15 @@
   </header>
 
   <main class="wrapper">
+    
+    <section id="authBar" class="auth-bar">
+      <span id="authStatus">Als Gast unterwegs</span>
+      <div class="auth-actions">
+        <button id="loginButton" type="button">Anmelden / Registrieren</button>
+        <button id="logoutButton" type="button" class="hidden">Abmelden</button>
+      </div>
+    </section>
+    
     <section class="filters">
       <input
         id="searchInput"
@@ -64,6 +73,52 @@
         <p id="detailPrice" class="detail-price"></p>
         <p id="detailDescription" class="detail-description"></p>
       </div>
+    </article>
+  </div>
+  
+  <!-- Auth-Overlay für Login / Registrierung -->
+  <div id="authOverlay" class="auth-overlay" aria-hidden="true">
+    <div class="detail-backdrop" id="authBackdrop"></div>
+
+    <article class="auth-panel">
+      <button class="detail-close" id="authClose" aria-label="Schließen">×</button>
+
+      <h2 id="authTitle">Anmelden</h2>
+      <p id="authHint" class="auth-hint">
+        Melde dich mit deiner E-Mail und deinem Passwort an.
+      </p>
+
+      <form id="authForm" class="auth-form">
+        <label class="auth-field auth-displayname-field">
+          Anzeigename (nur bei Registrierung)
+          <input id="authDisplayName" type="text" autocomplete="nickname" />
+        </label>
+
+        <label class="auth-field">
+          E-Mail
+          <input id="authEmail" type="email" autocomplete="email" required />
+        </label>
+
+        <label class="auth-field">
+          Passwort
+          <input id="authPassword" type="password" autocomplete="current-password" required />
+        </label>
+
+        <button type="submit" id="authSubmit" class="auth-submit">
+          Anmelden
+        </button>
+      </form>
+
+      <div class="auth-switch">
+        <button type="button" id="switchToRegister" class="auth-link">
+          Noch kein Konto? Registrieren
+        </button>
+        <button type="button" id="switchToLogin" class="auth-link hidden">
+          Schon registriert? Anmelden
+        </button>
+      </div>
+
+      <p class="auth-message" id="authMessage"></p>
     </article>
   </div>
 
