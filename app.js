@@ -23,6 +23,13 @@ const detailMeta = document.getElementById("detailMeta");
 const detailPrice = document.getElementById("detailPrice");
 const detailDescription = document.getElementById("detailDescription");
 
+// Rating-Elemente
+const ratingSection = document.getElementById("ratingSection");
+const ratingStars = document.getElementById("ratingStars");
+const ratingHint = document.getElementById("ratingHint");
+const ratingNote = document.getElementById("ratingNote");
+const ratingSave = document.getElementById("ratingSave");
+
 // Auth-Bar & Overlay
 const authBar = document.getElementById("authBar");
 const authStatus = document.getElementById("authStatus");
@@ -43,13 +50,17 @@ const switchToRegister = document.getElementById("switchToRegister");
 const switchToLogin = document.getElementById("switchToLogin");
 const authMessage = document.getElementById("authMessage");
 
-// Zustand
+// Zustand für Detail & Rating
 let allWhiskies = [];
 let currentSort = "name_asc";
 
 let currentUser = null;
 let authMode = "login"; // "login" oder "register"
 const LS_USER_KEY = "gi_current_user";
+
+let currentWhisky = null;
+let currentRatingValue = 0;
+let currentRatingNote = "";
 
 // --- Auth-Helfer ---
 
