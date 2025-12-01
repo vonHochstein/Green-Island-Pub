@@ -1,11 +1,9 @@
 // app.js
 
-// 1. Supabase-Konfiguration – HIER deine Daten eintragen
+// 1. Supabase-Konfiguration
 const SUPABASE_URL = "https://lnbjukymvazrpveyqlsd.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuYmp1a3ltdmF6cnB2ZXlxbHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjQyNjUsImV4cCI6MjA4MDAwMDI2NX0.owwhm0To_GQYlSXbaXc0TMsbAbNxOLeA2SAnRQERnCk";
-
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function renderStars(value) {
   const v = Number(value) || 0;
@@ -14,6 +12,8 @@ function renderStars(value) {
   const empty = "☆".repeat(Math.max(0, 5 - v));
   return full + empty;
 }
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // 2. DOM-Elemente
 const whiskyGrid = document.getElementById("whiskyGrid");
@@ -39,7 +39,6 @@ const ratingNote = document.getElementById("ratingNote");
 const ratingSave = document.getElementById("ratingSave");
 
 // Auth-Bar & Overlay
-const authBar = document.getElementById("authBar");
 const authStatus = document.getElementById("authStatus");
 const loginButton = document.getElementById("loginButton");
 const logoutButton = document.getElementById("logoutButton");
@@ -58,12 +57,12 @@ const switchToRegister = document.getElementById("switchToRegister");
 const switchToLogin = document.getElementById("switchToLogin");
 const authMessage = document.getElementById("authMessage");
 
-// Zustand für Detail & Rating
+// Zustand
 let allWhiskies = [];
 let currentSort = "name_asc";
 
 let currentUser = null;
-let authMode = "login"; // "login" oder "register"
+let authMode = "login";
 const LS_USER_KEY = "gi_current_user";
 
 let currentWhisky = null;
@@ -72,7 +71,7 @@ let currentRatingNote = "";
 
 // Rating-Übersichten
 let ratingStatsByWhisky = {}; // whisky_id -> { sum, count, avg }
-let myRatingsByWhisky = {};   // whisky_id -> meine Sterne
+let myRatingsByWhisky = {};   // whisky_id -> rating
 
 // --- Auth-Helfer ---
 
@@ -82,13 +81,14 @@ function setCurrentUser(user) {
     const store = {
       id: user.id,
       email: user.email,
-      display_name: user.display_name,
+      display_name: user.display_name
     };
     localStorage.setItem(LS_USER_KEY, JSON.stringify(store));
   } else {
     localStorage.removeItem(LS_USER_KEY);
   }
   updateAuthUI();
+  loadRatingStats();
 }
 
 function loadUserFromStorage() {
@@ -100,7 +100,7 @@ function loadUserFromStorage() {
   }
   try {
     currentUser = JSON.parse(raw);
-  } catch {
+  } catch (e) {
     currentUser = null;
   }
   updateAuthUI();
@@ -120,36 +120,39 @@ function updateAuthUI() {
     if (loginButton) loginButton.classList.remove("hidden");
     if (logoutButton) logoutButton.classList.add("hidden");
   }
-    // Rating-Sektion ggf. neu konfigurieren
+
   refreshRatingSection();
-  loadRatingStats();
 }
 
 function openAuthOverlay(mode) {
   if (!authOverlay) return;
 
   authMode = mode;
-  authMessage.textContent = "";
-  authEmail.value = "";
-  authPassword.value = "";
-  authDisplayName.value = "";
+  if (authMessage) authMessage.textContent = "";
+  if (authEmail) authEmail.value = "";
+  if (authPassword) authPassword.value = "";
+  if (authDisplayName) authDisplayName.value = "";
 
   if (mode === "login") {
-    authTitle.textContent = "Anmelden";
-    authHint.textContent =
+    if (authTitle) authTitle.textContent = "Anmelden";
+    if (authHint) authHint.textContent =
       "Melde dich mit deiner E-Mail und deinem Passwort an.";
-    authDisplayName.parentElement.classList.add("hidden");
-    authSubmit.textContent = "Anmelden";
-    switchToLogin.classList.add("hidden");
-    switchToRegister.classList.remove("hidden");
+    if (authDisplayName && authDisplayName.parentElement) {
+      authDisplayName.parentElement.classList.add("hidden");
+    }
+    if (authSubmit) authSubmit.textContent = "Anmelden";
+    if (switchToLogin) switchToLogin.classList.add("hidden");
+    if (switchToRegister) switchToRegister.classList.remove("hidden");
   } else {
-    authTitle.textContent = "Registrieren";
-    authHint.textContent =
+    if (authTitle) authTitle.textContent = "Registrieren";
+    if (authHint) authHint.textContent =
       "Lege ein Konto an, um deine verkosteten Whiskys zu speichern.";
-    authDisplayName.parentElement.classList.remove("hidden");
-    authSubmit.textContent = "Registrieren";
-    switchToLogin.classList.remove("hidden");
-    switchToRegister.classList.add("hidden");
+    if (authDisplayName && authDisplayName.parentElement) {
+      authDisplayName.parentElement.classList.remove("hidden");
+    }
+    if (authSubmit) authSubmit.textContent = "Registrieren";
+    if (switchToLogin) switchToLogin.classList.remove("hidden");
+    if (switchToRegister) switchToRegister.classList.add("hidden");
   }
 
   authOverlay.classList.add("is-visible");
@@ -168,19 +171,19 @@ async function handleAuthSubmit(event) {
 
   const email = authEmail.value.trim().toLowerCase();
   const password = authPassword.value.trim();
-  const displayName = authDisplayName.value.trim();
+  const displayName = authDisplayName ? authDisplayName.value.trim() : "";
 
   if (!email || !password) {
-    authMessage.textContent = "Bitte E-Mail und Passwort eingeben.";
+    if (authMessage) authMessage.textContent = "Bitte E-Mail und Passwort eingeben.";
     return;
   }
 
   if (authMode === "register" && !displayName) {
-    authMessage.textContent = "Bitte einen Anzeigenamen angeben.";
+    if (authMessage) authMessage.textContent = "Bitte einen Anzeigenamen angeben.";
     return;
   }
 
-  authMessage.textContent = "Bitte warten …";
+  if (authMessage) authMessage.textContent = "Bitte warten …";
 
   try {
     if (authMode === "register") {
@@ -189,9 +192,9 @@ async function handleAuthSubmit(event) {
         .insert([
           {
             email,
-            password_hash: password, // später durch echten Hash ersetzen
-            display_name: displayName,
-          },
+            password_hash: password, // Demo: Klartext
+            display_name: displayName
+          }
         ])
         .select("*");
 
@@ -245,10 +248,14 @@ async function handleAuthSubmit(event) {
     }
   } catch (err) {
     console.error(err);
-    authMessage.textContent =
-      "Unerwarteter Fehler. Bitte später erneut versuchen.";
+    if (authMessage) {
+      authMessage.textContent =
+        "Unerwarteter Fehler. Bitte später erneut versuchen.";
+    }
   }
 }
+
+// --- Rating-Helfer ---
 
 function setRatingUI(value, note) {
   currentRatingValue = value || 0;
@@ -271,7 +278,6 @@ function refreshRatingSection() {
   if (!ratingSection || !ratingHint) return;
 
   if (!currentUser) {
-    // Gast: Sterne deaktiviert, Notizfeld & Button „tot“
     if (ratingStars) {
       const buttons = ratingStars.querySelectorAll("button[data-value]");
       buttons.forEach((btn) => {
@@ -288,7 +294,6 @@ function refreshRatingSection() {
     }
     ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
   } else {
-    // Eingeloggt: UI aktivieren
     if (ratingStars) {
       const buttons = ratingStars.querySelectorAll("button[data-value]");
       buttons.forEach((btn) => {
@@ -302,7 +307,6 @@ function refreshRatingSection() {
       ratingSave.disabled = false;
     }
 
-    // Wenn ein Whisky aktiv ist, holen wir die gespeicherte Bewertung
     if (currentWhisky) {
       loadCurrentUserRatingForCurrentWhisky();
     } else {
@@ -353,7 +357,6 @@ async function saveCurrentRating() {
     return;
   }
 
-  // Note aus dem Textfeld holen
   if (ratingNote) {
     currentRatingNote = ratingNote.value.trim();
   }
@@ -373,28 +376,28 @@ async function saveCurrentRating() {
           user_id: currentUser.id,
           whisky_id: currentWhisky.id,
           rating: currentRatingValue,
-          notes: currentRatingNote,
+          notes: currentRatingNote
         },
         {
-          onConflict: "user_id,whisky_id",
+          onConflict: "user_id,whisky_id"
         }
       );
 
     if (error) {
       console.error(error);
-      ratingHint.textContent =
-        "Bewertung konnte nicht gespeichert werden.";
+      ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
       return;
     }
 
     ratingHint.textContent = "Bewertung gespeichert.";
+    loadRatingStats();
   } catch (err) {
     console.error(err);
     ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
-    // Durchschnitt & eigene Bewertung aktualisieren
-    loadRatingStats();
   }
 }
+
+// --- Rating-Übersicht laden ---
 
 async function loadRatingStats() {
   try {
@@ -418,18 +421,15 @@ async function loadRatingStats() {
         const r = Number(row.rating) || 0;
         if (!wid || !r) continue;
 
-        // Durchschnitt für alle
         if (!stats[wid]) stats[wid] = { sum: 0, count: 0, avg: 0 };
         stats[wid].sum += r;
         stats[wid].count += 1;
 
-        // Meine Bewertung
         if (currentUser && row.user_id === currentUser.id) {
           mine[wid] = r;
         }
       }
 
-      // Ø ausrechnen
       for (const wid in stats) {
         const s = stats[wid];
         s.avg = s.count > 0 ? s.sum / s.count : 0;
@@ -439,7 +439,6 @@ async function loadRatingStats() {
     ratingStatsByWhisky = stats;
     myRatingsByWhisky = mine;
 
-    // Liste mit neuen Daten neu zeichnen
     updateView();
   } catch (err) {
     console.error(err);
@@ -448,9 +447,7 @@ async function loadRatingStats() {
 
 // 3. Whiskys laden
 async function loadWhiskies() {
-  if (!statusEl) return;
-
-  statusEl.textContent = "Lade Whiskys …";
+  if (statusEl) statusEl.textContent = "Lade Whiskys …";
 
   const { data, error } = await supabaseClient
     .from("whiskies_green_island")
@@ -460,12 +457,14 @@ async function loadWhiskies() {
 
   if (error) {
     console.error(error);
-    statusEl.textContent = "Fehler beim Laden der Whiskys.";
+    if (statusEl) statusEl.textContent = "Fehler beim Laden der Whiskys.";
     return;
   }
 
   allWhiskies = data || [];
-  statusEl.textContent = `${allWhiskies.length} Whisky(s) in der Demo geladen.`;
+  if (statusEl) {
+    statusEl.textContent = `${allWhiskies.length} Whisky(s) in der Demo geladen.`;
+  }
 
   updateView();
   loadRatingStats();
@@ -531,7 +530,7 @@ function renderWhiskies(list) {
     card.appendChild(meta);
     card.appendChild(desc);
     card.appendChild(badge);
-    
+
     // Bewertungs-Zeile
     const ratingSummary = document.createElement("div");
     ratingSummary.className = "whisky-rating-summary";
@@ -539,26 +538,26 @@ function renderWhiskies(list) {
     const stats = ratingStatsByWhisky[w.id];
     const myRating = myRatingsByWhisky[w.id];
 
-    const parts = [];
+    const summaryParts = [];
 
     if (stats && stats.count > 0) {
       const avgRounded = Math.round(stats.avg * 10) / 10;
-      parts.push(`Ø ${avgRounded.toFixed(1)} (${stats.count})`);
+      summaryParts.push(`Ø ${avgRounded.toFixed(1)} (${stats.count})`);
     }
 
     if (currentUser && myRating) {
-      parts.push(`Deine Bewertung: ${renderStars(myRating)}`);
+      summaryParts.push(`Deine Bewertung: ${renderStars(myRating)}`);
     }
 
-    if (!parts.length) {
+    if (!summaryParts.length) {
       ratingSummary.textContent = "Noch keine Bewertungen.";
     } else {
-      ratingSummary.textContent = parts.join(" · ");
+      ratingSummary.textContent = summaryParts.join(" · ");
     }
 
     card.appendChild(ratingSummary);
 
-    // Klick auf die Karte öffnet die Detailansicht
+    // Klick öffnet Detail
     card.addEventListener("click", () => {
       openDetail(w);
     });
@@ -570,7 +569,7 @@ function renderWhiskies(list) {
 // Detail öffnen/schließen
 function openDetail(w) {
   if (!detailOverlay) return;
-  
+
   currentWhisky = w;
 
   detailImage.src =
@@ -597,15 +596,8 @@ function openDetail(w) {
     w.description ||
     "Für diesen Whisky liegt noch keine Beschreibung vor.";
 
-  // Rating-UI aktualisieren
   setRatingUI(0, "");
-  if (currentUser) {
-    refreshRatingSection();
-  } else {
-    if (ratingSection && ratingHint) {
-      refreshRatingSection();
-    }
-  }
+  refreshRatingSection();
 
   detailOverlay.classList.add("is-visible");
   detailOverlay.setAttribute("aria-hidden", "false");
@@ -652,7 +644,7 @@ function updateView() {
         w.distillery,
         w.origin_country,
         w.style,
-        w.description,
+        w.description
       ]
         .filter(Boolean)
         .join(" ")
@@ -734,15 +726,7 @@ if (authForm) {
   authForm.addEventListener("submit", handleAuthSubmit);
 }
 
-// ESC-Taste: beide Overlays schließen
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closeDetail();
-    closeAuthOverlay();
-  }
-});
-
-// Sterne-Klick
+// Sterne-Events
 if (ratingStars) {
   ratingStars.addEventListener("click", (event) => {
     const target = event.target;
@@ -765,12 +749,19 @@ if (ratingStars) {
   });
 }
 
-// Speichern-Klick
 if (ratingSave) {
   ratingSave.addEventListener("click", () => {
     saveCurrentRating();
   });
 }
+
+// ESC-Taste: beide Overlays schließen
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeDetail();
+    closeAuthOverlay();
+  }
+});
 
 // 7. Start
 loadUserFromStorage();
