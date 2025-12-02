@@ -8,7 +8,7 @@ const SUPABASE_ANON_KEY =
 function renderStars(value) {
   let v = Number(value) || 0;
 
-  // Auf halbe runden
+  // Auf halbe Sterne runden
   v = Math.round(v * 2) / 2;
 
   const full = Math.floor(v);
