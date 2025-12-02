@@ -645,14 +645,23 @@ body {
 /* Sterne als Text-Glyphen mit CSS-Halbierung */
 
 .star {
-  display: inline-block;
-  position: relative;
+  display: inline-flex;        /* statt inline-block */
+  align-items: center;         /* vertikal sauber zentriert */
+  justify-content: center;
   width: 1.1rem;
   height: 1.1rem;
   margin-right: 0.05rem;
-  font-size: 1.05rem;
-  line-height: 1.1rem;
-  text-align: center;
+  font-size: 1.0rem;           /* minimal kleiner angepasst */
+  line-height: 1.0rem;         /* gleiche Höhe wie font-size */
+  position: relative;
+  vertical-align: middle;      /* Schlüsselstelle */
+}
+
+.star::before,
+.star::after {
+  top: 0;
+  bottom: 0;
+  margin: auto 0;              /* exakt mittig */
 }
 
 /* Grundstern – leere Variante in mattgold */
