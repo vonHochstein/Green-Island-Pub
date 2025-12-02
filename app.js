@@ -95,6 +95,38 @@ function setCurrentUser(user) {
   loadRatingStats();
 }
 
+function updateProgress() {
+  if (!currentUser) {
+    // Gäste sehen keinen Fortschritt
+    if (progressBarSection) progressBarSection.classList.add("hidden");
+    return;
+  }
+
+  const total = allWhiskies.length;
+  const mine = Object.keys(myRatingsByWhisky).length;
+
+  if (total === 0) {
+    if (progressBarSection) progressBarSection.classList.add("hidden");
+    return;
+  }
+
+  const percent = Math.round((mine / total) * 1000) / 10; // z.B. 16.7 %
+
+  if (progressText) {
+    progressText.textContent =
+      `Du hast ${mine} von ${total} Whiskys bewertet (${percent} %)`;
+  }
+
+  if (progressBar) {
+    progressBar.style.width = percent + "%";
+  }
+
+  // Sichtbar machen
+  if (progressBarSection) {
+    progressBarSection.classList.remove("hidden");
+  }
+}
+
 function loadUserFromStorage() {
   const raw = localStorage.getItem(LS_USER_KEY);
   if (!raw) {
@@ -126,6 +158,7 @@ function updateAuthUI() {
   }
 
   refreshRatingSection();
+  updateProgress();
 }
 
 function openAuthOverlay(mode) {
@@ -447,6 +480,7 @@ async function loadRatingStats() {
   } catch (err) {
     console.error(err);
   }
+  updateProgress();
 }
 
 // 3. Whiskys laden
@@ -472,6 +506,7 @@ async function loadWhiskies() {
 
   updateView();
   loadRatingStats();
+  updateProgress();
 }
 
 // 4. Whiskys rendern
