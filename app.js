@@ -5,11 +5,12 @@ const SUPABASE_URL = "https://lnbjukymvazrpveyqlsd.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuYmp1a3ltdmF6cnB2ZXlxbHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjQyNjUsImV4cCI6MjA4MDAwMDI2NX0.owwhm0To_GQYlSXbaXc0TMsbAbNxOLeA2SAnRQERnCk";
 
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Sterne-Rendering für Durchschnitt / eigene Bewertung
 function renderStars(value) {
   let v = Number(value) || 0;
-
-  // Auf halbe Sterne runden
-  v = Math.round(v * 2) / 2;
+  v = Math.round(v * 2) / 2; // auf halbe Sterne runden
 
   const full = Math.floor(v);
   const hasHalf = v - full === 0.5;
@@ -17,17 +18,14 @@ function renderStars(value) {
 
   let html = "";
 
-  // volle Sterne
   for (let i = 0; i < full; i++) {
     html += `<span class="star full"></span>`;
   }
 
-  // halber Stern
   if (hasHalf) {
     html += `<span class="star half"></span>`;
   }
 
-  // leere Sterne
   const used = full + (hasHalf ? 1 : 0);
   for (let i = used; i < max; i++) {
     html += `<span class="star empty"></span>`;
@@ -36,15 +34,17 @@ function renderStars(value) {
   return html;
 }
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 // 2. DOM-Elemente
 const whiskyGrid = document.getElementById("whiskyGrid");
 const statusEl = document.getElementById("status");
 const searchInput = document.getElementById("searchInput");
-const sortSelect = document.getElementById("sortSelect");
 
-const progressBarSection = document.getElementById("progressBarSection");
+// Sortier-UI
+const sortFieldSelect = document.getElementById("sortFieldSelect");
+const sortDirToggle = document.getElementById("sortDirToggle");
+
+// Fortschritt in der Auth-Bar
+const progressSection = document.getElementById("progressSection");
 const progressText = document.getElementById("progressText");
 const progressBar = document.getElementById("progressBar");
 
@@ -67,8 +67,9 @@ const ratingSave = document.getElementById("ratingSave");
 
 // Auth-Bar & Overlay
 const authStatus = document.getElementById("authStatus");
-const loginButton = document.getElementById("loginButton");
-const logoutButton = document.getElementById("logoutButton");
+const btnLogin = document.getElementById("btnLogin");
+const btnRegister = document.getElementById("btnRegister");
+const btnLogout = document.getElementById("btnLogout");
 
 const authOverlay = document.getElementById("authOverlay");
 const authBackdrop = document.getElementById("authBackdrop");
@@ -121,8 +122,7 @@ function setCurrentUser(user) {
 
 function updateProgress() {
   if (!currentUser) {
-    // Gäste sehen keinen Fortschritt
-    if (progressBarSection) progressBarSection.classList.add("hidden");
+    if (progressSection) progressSection.classList.add("hidden");
     return;
   }
 
@@ -130,7 +130,7 @@ function updateProgress() {
   const mine = Object.keys(myRatingsByWhisky).length;
 
   if (total === 0) {
-    if (progressBarSection) progressBarSection.classList.add("hidden");
+    if (progressSection) progressSection.classList.add("hidden");
     return;
   }
 
@@ -145,9 +145,8 @@ function updateProgress() {
     progressBar.style.width = percent + "%";
   }
 
-  // Sichtbar machen
-  if (progressBarSection) {
-    progressBarSection.classList.remove("hidden");
+  if (progressSection) {
+    progressSection.classList.remove("hidden");
   }
 }
 
@@ -173,12 +172,15 @@ function updateAuthUI() {
     authStatus.textContent =
       "Angemeldet als: " +
       (currentUser.display_name || currentUser.email || "Unbekannt");
-    if (loginButton) loginButton.classList.add("hidden");
-    if (logoutButton) logoutButton.classList.remove("hidden");
+    if (btnLogin) btnLogin.classList.add("hidden");
+    if (btnRegister) btnRegister.classList.add("hidden");
+    if (btnLogout) btnLogout.classList.remove("hidden");
   } else {
     authStatus.textContent = "Als Gast unterwegs";
-    if (loginButton) loginButton.classList.remove("hidden");
-    if (logoutButton) logoutButton.classList.add("hidden");
+    if (btnLogin) btnLogin.classList.remove("hidden");
+    if (btnRegister) btnRegister.classList.remove("hidden");
+    if (btnLogout) btnLogout.classList.add("hidden");
+    if (progressSection) progressSection.classList.add("hidden");
   }
 
   refreshRatingSection();
@@ -199,7 +201,6 @@ function updateSortOptionsForAuth() {
       opt.hidden = false;
     });
   } else {
-    // Falls gerade "Deine Bewertung" aktiv ist → auf "name" zurück
     if (sortFieldSelect.value === "rating_my") {
       sortFieldSelect.value = "name";
       currentSortField = "name";
@@ -591,7 +592,7 @@ function renderWhiskies(list) {
 
     const priceEl = document.createElement("div");
     priceEl.className = "whisky-price";
-    
+
     const priceParts = [];
     if (w.price_eur != null) {
       priceParts.push(`2 cl ${w.price_eur.toFixed(2)} €`);
@@ -599,9 +600,9 @@ function renderWhiskies(list) {
     if (w.price_4cl_eur != null) {
       priceParts.push(`4 cl ${w.price_4cl_eur.toFixed(2)} €`);
     }
-    
+
     priceEl.textContent = priceParts.join(" · ");
-    
+
     header.appendChild(nameEl);
     header.appendChild(priceEl);
 
@@ -644,7 +645,7 @@ function renderWhiskies(list) {
         `Ø ${avgRounded.toFixed(1)} ${renderStars(stats.avg)} (${stats.count})`
       );
     }
-    
+
     if (currentUser && myRating) {
       summaryParts.push(`Deine Bewertung: ${renderStars(myRating)}`);
     }
@@ -657,7 +658,6 @@ function renderWhiskies(list) {
 
     card.appendChild(ratingSummary);
 
-    // Klick öffnet Detail
     card.addEventListener("click", () => {
       openDetail(w);
     });
@@ -693,7 +693,7 @@ function openDetail(w) {
   if (w.price_4cl_eur != null) {
     priceParts.push(`4 cl ${w.price_4cl_eur.toFixed(2)} €`);
   }
-  
+
   if (priceParts.length) {
     detailPrice.textContent = `Preis im Pub: ${priceParts.join(" · ")}`;
   } else {
@@ -721,65 +721,63 @@ function closeDetail() {
 
 // 5. Suche + Sortierung
 function updateView() {
-const q = (searchInput?.value || "").toLowerCase().trim();
+  const q = (searchInput?.value || "").toLowerCase().trim();
 
-// Feld + Richtung aus UI lesen
-currentSortField = sortFieldSelect ? sortFieldSelect.value : "name";
-const dir = currentSortDir; // "asc" oder "desc"
+  currentSortField = sortFieldSelect ? sortFieldSelect.value : "name";
+  const dir = currentSortDir;
 
-let list = [...allWhiskies];
+  let list = [...allWhiskies];
 
-list.sort((a, b) => {
-  const getAvg = (w) => {
-    const stats = ratingStatsByWhisky[w.id];
-    return stats ? stats.avg : 0;
-  };
+  list.sort((a, b) => {
+    const getAvg = (w) => {
+      const stats = ratingStatsByWhisky[w.id];
+      return stats ? stats.avg : 0;
+    };
 
-  const getMy = (w) => {
-    if (!currentUser) return 0;
-    const r = myRatingsByWhisky[w.id];
-    return r ? Number(r) : 0;
-  };
+    const getMy = (w) => {
+      if (!currentUser) return 0;
+      const r = myRatingsByWhisky[w.id];
+      return r ? Number(r) : 0;
+    };
 
-  const mul = dir === "asc" ? 1 : -1;
+    const mul = dir === "asc" ? 1 : -1;
 
-  switch (currentSortField) {
-    case "name": {
-      const cmp = (a.name || "").localeCompare(b.name || "");
-      return cmp * mul;
+    switch (currentSortField) {
+      case "name": {
+        const cmp = (a.name || "").localeCompare(b.name || "");
+        return cmp * mul;
+      }
+
+      case "price": {
+        const av = a.price_eur ?? Number.POSITIVE_INFINITY;
+        const bv = b.price_eur ?? Number.POSITIVE_INFINITY;
+        return (av - bv) * mul;
+      }
+
+      case "abv": {
+        const av = a.abv ?? 0;
+        const bv = b.abv ?? 0;
+        return (av - bv) * mul;
+      }
+
+      case "rating_avg": {
+        const av = getAvg(a);
+        const bv = getAvg(b);
+        if (av !== bv) return (av - bv) * mul;
+        return (a.name || "").localeCompare(b.name || "");
+      }
+
+      case "rating_my": {
+        const av = getMy(a);
+        const bv = getMy(b);
+        if (av !== bv) return (av - bv) * mul;
+        return (a.name || "").localeCompare(b.name || "");
+      }
+
+      default:
+        return 0;
     }
-
-    case "price": {
-      const av = a.price_eur ?? Number.POSITIVE_INFINITY;
-      const bv = b.price_eur ?? Number.POSITIVE_INFINITY;
-      return (av - bv) * mul;
-    }
-
-    case "abv": {
-      const av = a.abv ?? 0;
-      const bv = b.abv ?? 0;
-      return (av - bv) * mul;
-    }
-
-    case "rating_avg": {
-      const av = getAvg(a);
-      const bv = getAvg(b);
-      if (av !== bv) return (av - bv) * mul;
-      // Bei Gleichstand nach Name
-      return (a.name || "").localeCompare(b.name || "");
-    }
-
-    case "rating_my": {
-      const av = getMy(a);
-      const bv = getMy(b);
-      if (av !== bv) return (av - bv) * mul;
-      return (a.name || "").localeCompare(b.name || "");
-    }
-
-    default:
-      return 0;
-  }
-});
+  });
 
   if (q) {
     list = list.filter((w) => {
@@ -803,37 +801,25 @@ list.sort((a, b) => {
 
 // 6. Event Listener
 
-// Suche & Sortierung
+// Suche
 if (searchInput) {
   searchInput.addEventListener("input", () => {
     updateView();
   });
 }
 
-if (sortSelect) {
-  sortSelect.addEventListener("change", () => {
-    updateView();
-  });
-}
-
-if (searchInput) {
-  searchInput.addEventListener("input", () => {
-    updateView();
-  });
-}
-
+// Sortierfeld
 if (sortFieldSelect) {
   sortFieldSelect.addEventListener("change", () => {
     updateView();
   });
 }
 
+// Sortierrichtung (▲ / ▼)
 if (sortDirToggle) {
   sortDirToggle.addEventListener("click", () => {
-    // Richtung umschalten
     currentSortDir = currentSortDir === "asc" ? "desc" : "asc";
 
-    // Pfeil und Klassen anpassen
     if (currentSortDir === "asc") {
       sortDirToggle.textContent = "▲";
       sortDirToggle.classList.remove("sort-dir-desc");
@@ -864,14 +850,20 @@ if (detailBackdrop) {
 }
 
 // Auth-Events
-if (loginButton) {
-  loginButton.addEventListener("click", () => {
+if (btnLogin) {
+  btnLogin.addEventListener("click", () => {
     openAuthOverlay("login");
   });
 }
 
-if (logoutButton) {
-  logoutButton.addEventListener("click", () => {
+if (btnRegister) {
+  btnRegister.addEventListener("click", () => {
+    openAuthOverlay("register");
+  });
+}
+
+if (btnLogout) {
+  btnLogout.addEventListener("click", () => {
     setCurrentUser(null);
   });
 }
