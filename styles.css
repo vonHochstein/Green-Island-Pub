@@ -200,6 +200,38 @@ body {
   border-color: var(--gold-main);
 }
 
+.progress-section {
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 12px;
+  background: rgba(5, 9, 7, 0.9);
+  border: 1px solid rgba(63, 81, 68, 0.85);
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: var(--gold-text);
+  margin-bottom: 0.3rem;
+}
+
+.progress-bar-wrapper {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(50, 60, 50, 0.7);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg,
+    rgba(212, 177, 90, 0.7),
+    rgba(212, 177, 90, 1)
+  );
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
 /* STATUS */
 
 .status {
