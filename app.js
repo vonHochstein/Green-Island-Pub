@@ -596,9 +596,11 @@ function renderWhiskies(list) {
 
     if (stats && stats.count > 0) {
       const avgRounded = Math.round(stats.avg * 10) / 10;
-      summaryParts.push(`Ø ${avgRounded.toFixed(1)} (${stats.count})`);
+      summaryParts.push(
+        `Ø ${avgRounded.toFixed(1)} ${renderStars(stats.avg)} (${stats.count})`
+      );
     }
-
+    
     if (currentUser && myRating) {
       summaryParts.push(`Deine Bewertung: ${renderStars(myRating)}`);
     }
