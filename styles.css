@@ -120,12 +120,12 @@ body {
 
 /* FILTERS */
 .filters {
+  margin: 0 0 0.75rem 0;      /* nur Abstand nach unten */
+  padding: 0;                 /* kein Innenabstand */
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 0.75rem;
-  padding: 0;          /* nur wenn du’s ganz clean willst */
+  flex-direction: column;     
+  align-items: stretch;       /* volle Breite, wie der Rest vom Inhalt */
+  gap: 0.4rem;                /* kleiner Abstand zwischen Suche und Sortierung */
 }
 
 /* Suchfeld nimmt auf mobilen Geräten volle Breite,
