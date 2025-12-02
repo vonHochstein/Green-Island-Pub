@@ -167,6 +167,43 @@ body {
   background: #050805;
 }
 
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#sortFieldSelect {
+  padding: 0.3rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 81, 68, 0.9);
+  background: rgba(7, 11, 8, 0.95);
+  color: var(--gold-text);
+  font-size: 0.85rem;
+}
+
+.sort-dir {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 81, 68, 0.9);
+  background: rgba(7, 11, 8, 0.95);
+  color: var(--gold-text);
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sort-dir-asc {
+  /* ▲ ist schon gesetzt, hier könntest du später optisch hervorheben */
+}
+
+.sort-dir-desc {
+  /* ▼-Variante – wir wechseln die Klasse im JS */
+}
+
 .auth-bar {
   margin-bottom: 0.7rem;
   padding: 0.4rem 0.7rem;
