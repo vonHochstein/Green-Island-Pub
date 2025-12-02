@@ -44,18 +44,21 @@
         placeholder="Suche nach Name, Destillerie, Stil, Land …"
       />
 
-    <select id="sortSelect">
-      <option value="name_asc">Name A–Z</option>
-      <option value="name_desc">Name Z–A</option>
-      <option value="price_asc">Preis aufsteigend</option>
-      <option value="price_desc">Preis absteigend</option>
-      <option value="abv_desc">Stärke (Vol.%) absteigend</option>
-      <option value="abv_asc">Stärke (Vol.%) aufsteigend</option>
-      <option value="rating_avg_desc">Gesamtbewertung absteigend</option>
-      <option value="rating_avg_asc">Gesamtbewertung aufsteigend</option>
-      <option value="rating_my_desc">Deine Bewertung absteigend</option>
-      <option value="rating_my_asc">Deine Bewertung aufsteigend</option>
-    </select>
+<select id="sortSelect">
+  <option value="name_asc">Name A–Z</option>
+  <option value="name_desc">Name Z–A</option>
+  <option value="price_asc">Preis aufsteigend</option>
+  <option value="price_desc">Preis absteigend</option>
+  <option value="abv_desc">Stärke (Vol.%) absteigend</option>
+  <option value="abv_asc">Stärke (Vol.%) aufsteigend</option>
+
+  <option value="rating_avg_desc">Gesamtbewertung absteigend</option>
+  <option value="rating_avg_asc">Gesamtbewertung aufsteigend</option>
+
+  <!-- Nur für angemeldete Nutzer -->
+  <option value="rating_my_desc" data-scope="my">Deine Bewertung absteigend</option>
+  <option value="rating_my_asc" data-scope="my">Deine Bewertung aufsteigend</option>
+</select>
 
     <section id="status" class="status">
       Lade Whiskys …
