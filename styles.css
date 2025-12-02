@@ -118,20 +118,17 @@ body {
   padding: 0.8rem 1rem 1.2rem;
 }
 
-/* FILTERS */
-.filters select:focus {
-  border-color: var(--gold-main);
-  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
-  background: #050805;
+/* FILTERS – wieder schlicht, ohne Box & ohne Einrückung */
+
+.filters {
+  margin: 0 0 0.75rem 0;   /* nur Abstand nach unten, keine Einrückung */
+  padding: 0;
 }
 
-/* Suchfeld nimmt auf mobilen Geräten volle Breite,
-   daneben rutscht dann Sortierung; auf größeren Screens kommt beides nebeneinander */
-.filters #searchInput {
-  flex: 1 1 180px;
-}
+/* Suchfeld */
 
 #searchInput {
+  width: 100%;
   padding: 0.65rem 0.9rem;
   height: 2.6rem;
   border-radius: 999px;
@@ -141,51 +138,27 @@ body {
   color: var(--gold-text);
 }
 
-.filters input {
-  flex: 1 1 220px;
-  padding: 0.6rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(100, 120, 100, 0.7);
-  background: rgba(5, 9, 7, 0.9);
-  color: var(--gold-text);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-}
-
-.filters input::placeholder {
+#searchInput::placeholder {
   color: rgba(188, 165, 106, 0.7);
 }
 
-.filters input:focus {
-  border-color: var(--gold-main);
-  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
-  background: #050805;
-}
-
-.filters select {
-  padding: 0.6rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid rgba(100, 120, 100, 0.7);
-  background: rgba(5, 9, 7, 0.9);
-  color: var(--gold-text);
-  font-size: 0.85rem;
+#searchInput:focus {
   outline: none;
-  min-width: 180px;
-  transition: border 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-}
-
-.filters select:focus {
   border-color: var(--gold-main);
   box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
   background: #050805;
 }
+
+/* Sortierbereich unter/ neben dem Suchfeld */
 
 .sort-controls {
+  margin-top: 0.4rem;
   display: flex;
   align-items: center;
   gap: 0.35rem;
 }
+
+/* Dropdown-Feld für Sortierkriterium */
 
 #sortFieldSelect {
   padding: 0.65rem 0.9rem;           /* gleiche innere Höhe wie Suchfeld */
@@ -196,11 +169,18 @@ body {
   background: rgba(7, 11, 8, 0.95);
   color: var(--gold-text);
   font-size: 0.9rem;
-
-  /* wichtig, damit das Dropdown optisch stabil wird */
   appearance: none;
   box-sizing: border-box;
 }
+
+#sortFieldSelect:focus {
+  outline: none;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
+  background: #050805;
+}
+
+/* Button für Auf/Absteigend */
 
 .sort-dir {
   width: 2.6rem;
@@ -225,16 +205,14 @@ body {
 }
 
 @media (max-width: 480px) {
-  .filters {
-    padding: 0.45rem 0.6rem;
-    gap: 0.45rem;
-  }
-
   .sort-controls {
     width: 100%;
     justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }
+
+/* AUTH-BAR + Fortschritt */
 
 .auth-bar {
   margin-bottom: 0.7rem;
@@ -714,23 +692,23 @@ body {
 /* Sterne als Text-Glyphen mit CSS-Halbierung */
 
 .star {
-  display: inline-flex;        /* statt inline-block */
-  align-items: center;         /* vertikal sauber zentriert */
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
   width: 1.1rem;
   height: 1.1rem;
   margin-right: 0.05rem;
-  font-size: 1.0rem;           /* minimal kleiner angepasst */
-  line-height: 1.0rem;         /* gleiche Höhe wie font-size */
+  font-size: 1.0rem;
+  line-height: 1.0rem;
   position: relative;
-  vertical-align: middle;      /* Schlüsselstelle */
+  vertical-align: middle;
 }
 
 .star::before,
 .star::after {
   top: 0;
   bottom: 0;
-  margin: auto 0;              /* exakt mittig */
+  margin: auto 0;
 }
 
 /* Grundstern – leere Variante in mattgold */
@@ -754,7 +732,6 @@ body {
   inset: 0;
   color: rgb(212, 177, 90);
   text-shadow: 0 0 3px rgba(212, 177, 90, 0.8);
-  /* nur linke Hälfte anzeigen */
   clip-path: inset(0 50% 0 0);
 }
 
