@@ -119,13 +119,10 @@ body {
 }
 
 /* FILTERS */
-.filters {
-  margin: 0 0 0.75rem 0;      /* nur Abstand nach unten */
-  padding: 0;                 /* kein Innenabstand */
-  display: flex;
-  flex-direction: column;     
-  align-items: stretch;       /* volle Breite, wie der Rest vom Inhalt */
-  gap: 0.4rem;                /* kleiner Abstand zwischen Suche und Sortierung */
+.filters select:focus {
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
+  background: #050805;
 }
 
 /* Suchfeld nimmt auf mobilen Geräten volle Breite,
@@ -138,7 +135,7 @@ body {
   padding: 0.65rem 0.9rem;
   height: 2.6rem;
   border-radius: 999px;
-  font-size: 1rem; /* WICHTIG: 1rem ≈ 16px */
+  font-size: 1rem;
   border: 1px solid rgba(63, 81, 68, 0.9);
   background: rgba(7, 11, 8, 0.95);
   color: var(--gold-text);
