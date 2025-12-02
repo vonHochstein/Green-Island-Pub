@@ -21,6 +21,10 @@ const statusEl = document.getElementById("status");
 const searchInput = document.getElementById("searchInput");
 const sortSelect = document.getElementById("sortSelect");
 
+const progressBarSection = document.getElementById("progressBarSection");
+const progressText = document.getElementById("progressText");
+const progressBar = document.getElementById("progressBar");
+
 // Detail-Overlay
 const detailOverlay = document.getElementById("detailOverlay");
 const detailBackdrop = document.getElementById("detailBackdrop");
