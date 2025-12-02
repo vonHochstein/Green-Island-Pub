@@ -124,13 +124,8 @@ body {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
-
-  background: rgba(5, 9, 7, 0.96);              /* dunkler Balken */
-  border-radius: 14px;
-  border: 1px solid rgba(63, 81, 68, 0.9);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  padding: 0;          /* nur wenn du’s ganz clean willst */
 }
 
 /* Suchfeld nimmt auf mobilen Geräten volle Breite,
