@@ -6,11 +6,26 @@ const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxuYmp1a3ltdmF6cnB2ZXlxbHNkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MjQyNjUsImV4cCI6MjA4MDAwMDI2NX0.owwhm0To_GQYlSXbaXc0TMsbAbNxOLeA2SAnRQERnCk";
 
 function renderStars(value) {
-  const v = Number(value) || 0;
-  if (!v) return "–";
-  const full = "★".repeat(Math.min(5, v));
-  const empty = "☆".repeat(Math.max(0, 5 - v));
-  return full + empty;
+  let v = Number(value) || 0;
+  if (v <= 0) return "–";
+
+  // Auf halbe Sterne runden, z. B. 4,26 -> 4,5
+  v = Math.round(v * 2) / 2;
+
+  let stars = "";
+  for (let i = 1; i <= 5; i++) {
+    if (v >= i) {
+      // voller Stern
+      stars += "★";
+    } else if (v >= i - 0.5) {
+      // halber Stern
+      stars += "⯨";
+    } else {
+      // leerer Stern
+      stars += "☆";
+    }
+  }
+  return stars;
 }
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
