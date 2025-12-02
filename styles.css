@@ -641,3 +641,37 @@ body {
     margin: 2.5rem 0.8rem 1.5rem;
   }
 }
+
+.star {
+  display: inline-block;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-right: 0.05rem;
+  background: url('data:image/svg+xml;utf8,<svg fill="none" stroke="gold" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2" /></svg>') no-repeat center/contain;
+  opacity: 0.3;
+}
+
+.star.full {
+  opacity: 1;
+  filter: drop-shadow(0 0 3px rgba(212,177,90,0.8));
+}
+
+.star.half {
+  position: relative;
+  opacity: 1;
+}
+
+.star.half::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;     /* genau die Hälfte füllen */
+  height: 100%;
+  background: url('data:image/svg+xml;utf8,<svg fill="gold" stroke="gold" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2" /></svg>') no-repeat center/contain;
+  overflow: hidden;
+}
+
+.star.empty {
+  opacity: 0.3;
+}
