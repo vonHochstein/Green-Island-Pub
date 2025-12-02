@@ -767,7 +767,7 @@ body {
   inset: 0;
   color: rgb(212, 177, 90);
   text-shadow: 0 0 3px rgba(212, 177, 90, 0.8);
-  clip-path: inset(0 50% 0 0);
+  clip-path: inset(0 54% 0 0);
 }
 
 /* Leerer Stern: nur der matte Grundstern (::after), nichts weiter */
