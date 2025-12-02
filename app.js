@@ -7,25 +7,33 @@ const SUPABASE_ANON_KEY =
 
 function renderStars(value) {
   let v = Number(value) || 0;
-  if (v <= 0) return "–";
 
-  // Auf halbe Sterne runden, z. B. 4,26 -> 4,5
+  // Auf halbe runden
   v = Math.round(v * 2) / 2;
 
-  let stars = "";
-  for (let i = 1; i <= 5; i++) {
-    if (v >= i) {
-      // voller Stern
-      stars += "★";
-    } else if (v >= i - 0.5) {
-      // halber Stern
-      stars += "⯨";
-    } else {
-      // leerer Stern
-      stars += "☆";
-    }
+  const full = Math.floor(v);
+  const hasHalf = v - full === 0.5;
+  const max = 5;
+
+  let html = "";
+
+  // volle Sterne
+  for (let i = 0; i < full; i++) {
+    html += `<span class="star full"></span>`;
   }
-  return stars;
+
+  // halber Stern
+  if (hasHalf) {
+    html += `<span class="star half"></span>`;
+  }
+
+  // leere Sterne
+  const used = full + (hasHalf ? 1 : 0);
+  for (let i = used; i < max; i++) {
+    html += `<span class="star empty"></span>`;
+  }
+
+  return html;
 }
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -615,7 +623,7 @@ function renderWhiskies(list) {
     if (!summaryParts.length) {
       ratingSummary.textContent = "Noch keine Bewertungen.";
     } else {
-      ratingSummary.textContent = summaryParts.join(" · ");
+      ratingSummary.innerHTML = summaryParts.join(" · ");
     }
 
     card.appendChild(ratingSummary);
