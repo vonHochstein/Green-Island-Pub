@@ -118,24 +118,32 @@ body {
   padding: 0.8rem 1rem 1.2rem;
 }
 
-/* FILTERS – wieder schlicht, ohne Box & ohne Einrückung */
+/* FILTER-BEREICH – Layout */
 
+/* Grundlayout: Spalte (mobile), alles 100% Breite */
 .filters {
-  margin: 0 0 0.75rem 0;   /* nur Abstand nach unten, keine Einrückung */
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Jedes direkte Kind der .filters (Suchfeld + Sortierblock) nimmt volle Breite */
+.filters > * {
+  width: 100%;
 }
 
 /* Suchfeld */
 
 #searchInput {
-  width: 100%;
   padding: 0.65rem 0.9rem;
   height: 2.6rem;
-  border-radius: 12px;
+  border-radius: 999px;
   font-size: 1rem;
   border: 1px solid rgba(63, 81, 68, 0.9);
   background: rgba(7, 11, 8, 0.95);
   color: var(--gold-text);
+  box-sizing: border-box;
 }
 
 #searchInput::placeholder {
@@ -151,26 +159,27 @@ body {
 
 /* Sortierbereich unter/ neben dem Suchfeld */
 
+/* Sortier-Block: Dropdown + Button */
 .sort-controls {
-  margin-top: 0.3rem;   /* vorher 0.4rem ~ etwas zu weit weg */
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  width: 100%;              /* wichtig: Gesamtblock = 100% */
 }
 
-/* Dropdown-Feld für Sortierkriterium */
-
+/* Dropdown füllt den Platz, Button bleibt kompakt */
 #sortFieldSelect {
-  padding: 0.65rem 0.9rem;           /* gleiche innere Höhe wie Suchfeld */
-  height: 2.6rem;                    /* exakt gleiche Gesamthöhe */
-  line-height: 1rem;                 /* verhindert hochrutschen des Texts */
-  border-radius: 12px;
+  flex: 1 1 auto;
+  padding: 0.65rem 0.9rem;
+  height: 2.6rem;
+  line-height: 1rem;
+  border-radius: 999px;
   border: 1px solid rgba(63, 81, 68, 0.9);
   background: rgba(7, 11, 8, 0.95);
   color: var(--gold-text);
   font-size: 0.9rem;
   appearance: none;
-  box-sizing: 100%; /*border-box
+  box-sizing: border-box;
 }
 
 #sortFieldSelect:focus {
@@ -185,7 +194,7 @@ body {
 .sort-dir {
   width: 2.6rem;
   height: 2.6rem;
-  border-radius: 12px;
+  border-radius: 999px;
   border: 1px solid rgba(63, 81, 68, 0.9);
   background: rgba(7, 11, 8, 0.95);
   color: var(--gold-text);
@@ -204,11 +213,32 @@ body {
   /* ▼-Variante – wir wechseln die Klasse im JS */
 }
 
-@media (max-width: 480px) {
+/* Mobile-Finetuning – bei ganz schmalen Screens alles linksbündig, aber volle Breite */
+@media (max-width: 600px) {
+  .filters {
+    gap: 0.4rem;
+  }
+
   .sort-controls {
-    width: 100%;
     justify-content: flex-start;
-    flex-wrap: wrap;
+  }
+}
+
+/* Ab mittlerer Breite (Querformat / Tablet etc.) – Suchfeld und Sortierblock nebeneinander */
+@media (min-width: 720px) {
+  .filters {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .filters > * {
+    width: auto;
+    flex: 1 1 0;
+  }
+
+  /* Sortierblock nach rechts schieben, wirkt wie „Toolbar“ */
+  .sort-controls {
+    justify-content: flex-end;
   }
 }
 
