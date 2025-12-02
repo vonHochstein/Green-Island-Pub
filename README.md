@@ -1,1 +1,4 @@
-# Green-Island-Pub
+Green Island Pub – Whiskydatenbank (Demo-Version)
+Dieses Projekt ist eine interaktive Whiskydatenbank für das Green Island Pub in Zeitz.
+Sie ermöglicht Gästen, die gesamte Whiskykarte digital zu durchsuchen, Sortierungen und Filter anzuwenden und sich einen eigenen Account anzulegen. Eingeloggte Nutzer können Whiskys bewerten, persönliche Notizen speichern und ihren eigenen Fortschritt verfolgen („Wie viele Whiskys habe ich schon probiert?“).
+Langfristiges Ziel ist ein lebendiges, spielerisches System, das den Pub-Besuch bereichert und den Gästen eine moderne, intuitive Whisky-Erfahrung bietet.
