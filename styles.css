@@ -642,36 +642,45 @@ body {
   }
 }
 
+/* Basis für alle Sterne */
 .star {
   display: inline-block;
   width: 1.1rem;
   height: 1.1rem;
   margin-right: 0.05rem;
-  background: url('data:image/svg+xml;utf8,<svg fill="none" stroke="gold" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2" /></svg>') no-repeat center/contain;
-  opacity: 0.3;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
+/* Leerer Stern – nur Kontur, matt */
+.star.empty {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
+  opacity: 0.25;
+}
+
+/* Voller Stern – komplett gefüllt in Gold */
 .star.full {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='rgb(212,177,90)' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
   opacity: 1;
   filter: drop-shadow(0 0 3px rgba(212,177,90,0.8));
 }
 
+/* Halber Stern – Kontur als Basis, linke Hälfte gefüllt */
 .star.half {
   position: relative;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
   opacity: 1;
 }
 
+/* Linke Hälfte als gefüllter Stern, normal groß, rechte Hälfte „abgeschnitten“ */
 .star.half::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 50%;     /* genau die Hälfte füllen */
-  height: 100%;
-  background: url('data:image/svg+xml;utf8,<svg fill="gold" stroke="gold" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2" /></svg>') no-repeat center/contain;
-  overflow: hidden;
-}
-
-.star.empty {
-  opacity: 0.3;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='rgb(212,177,90)' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 200% 100%; /* Star doppelt so breit „denken“ */
+  clip-path: inset(0 50% 0 0); /* rechte Hälfte abschneiden */
 }
