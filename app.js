@@ -187,29 +187,25 @@ function updateAuthUI() {
 }
 
 function updateSortOptionsForAuth() {
-  if (!sortSelect) return;
+  if (!sortFieldSelect) return;
 
   const myOptions = Array.from(
-    sortSelect.querySelectorAll("option[data-scope='my']")
+    sortFieldSelect.querySelectorAll("option[data-scope='my']")
   );
 
   if (currentUser) {
-    // Eingeloggt: Optionen sichtbar & nutzbar
     myOptions.forEach((opt) => {
       opt.disabled = false;
       opt.hidden = false;
     });
   } else {
-    // Wenn gerade eine „my“-Option aktiv ist → zurück auf Standard
-    if (
-      myOptions.some((opt) => opt.value === sortSelect.value)
-    ) {
-      sortSelect.value = "name_asc";
-      currentSort = "name_asc";
+    // Falls gerade "Deine Bewertung" aktiv ist → auf "name" zurück
+    if (sortFieldSelect.value === "rating_my") {
+      sortFieldSelect.value = "name";
+      currentSortField = "name";
       updateView();
     }
 
-    // Ausloggen: Optionen ausblenden & deaktivieren
     myOptions.forEach((opt) => {
       opt.disabled = true;
       opt.hidden = true;
@@ -725,10 +721,13 @@ function closeDetail() {
 
 // 5. Suche + Sortierung
 function updateView() {
-  const q = (searchInput?.value || "").toLowerCase().trim();
-  currentSort = sortSelect ? sortSelect.value : "name_asc";
+const q = (searchInput?.value || "").toLowerCase().trim();
 
-  let list = [...allWhiskies];
+// Feld + Richtung aus UI lesen
+currentSortField = sortFieldSelect ? sortFieldSelect.value : "name";
+const dir = currentSortDir; // "asc" oder "desc"
+
+let list = [...allWhiskies];
 
 list.sort((a, b) => {
   const getAvg = (w) => {
@@ -737,54 +736,43 @@ list.sort((a, b) => {
   };
 
   const getMy = (w) => {
-    // Wenn kein Nutzer angemeldet: immer 0
     if (!currentUser) return 0;
     const r = myRatingsByWhisky[w.id];
     return r ? Number(r) : 0;
   };
 
-  switch (currentSort) {
-    case "name_asc":
-      return (a.name || "").localeCompare(b.name || "");
-    case "name_desc":
-      return (b.name || "").localeCompare(a.name || "");
+  const mul = dir === "asc" ? 1 : -1;
 
-    case "price_asc":
-      return (a.price_eur ?? 999999) - (b.price_eur ?? 999999);
-    case "price_desc":
-      return (b.price_eur ?? -1) - (a.price_eur ?? -1);
-
-    case "abv_asc":
-      return (a.abv ?? 0) - (b.abv ?? 0);
-    case "abv_desc":
-      return (b.abv ?? 0) - (a.abv ?? 0);
-
-    // ➤ Globale Durchschnittsbewertung
-    case "rating_avg_desc": {
-      const ar = getAvg(a);
-      const br = getAvg(b);
-      if (br !== ar) return br - ar;
-      return (a.name || "").localeCompare(b.name || "");
-    }
-    case "rating_avg_asc": {
-      const ar = getAvg(a);
-      const br = getAvg(b);
-      if (ar !== br) return ar - br;
-      return (a.name || "").localeCompare(b.name || "");
+  switch (currentSortField) {
+    case "name": {
+      const cmp = (a.name || "").localeCompare(b.name || "");
+      return cmp * mul;
     }
 
-    // ➤ Deine individuelle Bewertung
-    case "rating_my_desc": {
-      const ar = getMy(a);
-      const br = getMy(b);
-      if (br !== ar) return br - ar;
+    case "price": {
+      const av = a.price_eur ?? Number.POSITIVE_INFINITY;
+      const bv = b.price_eur ?? Number.POSITIVE_INFINITY;
+      return (av - bv) * mul;
+    }
+
+    case "abv": {
+      const av = a.abv ?? 0;
+      const bv = b.abv ?? 0;
+      return (av - bv) * mul;
+    }
+
+    case "rating_avg": {
+      const av = getAvg(a);
+      const bv = getAvg(b);
+      if (av !== bv) return (av - bv) * mul;
       // Bei Gleichstand nach Name
       return (a.name || "").localeCompare(b.name || "");
     }
-    case "rating_my_asc": {
-      const ar = getMy(a);
-      const br = getMy(b);
-      if (ar !== br) return ar - br;
+
+    case "rating_my": {
+      const av = getMy(a);
+      const bv = getMy(b);
+      if (av !== bv) return (av - bv) * mul;
       return (a.name || "").localeCompare(b.name || "");
     }
 
@@ -824,6 +812,40 @@ if (searchInput) {
 
 if (sortSelect) {
   sortSelect.addEventListener("change", () => {
+    updateView();
+  });
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    updateView();
+  });
+}
+
+if (sortFieldSelect) {
+  sortFieldSelect.addEventListener("change", () => {
+    updateView();
+  });
+}
+
+if (sortDirToggle) {
+  sortDirToggle.addEventListener("click", () => {
+    // Richtung umschalten
+    currentSortDir = currentSortDir === "asc" ? "desc" : "asc";
+
+    // Pfeil und Klassen anpassen
+    if (currentSortDir === "asc") {
+      sortDirToggle.textContent = "▲";
+      sortDirToggle.classList.remove("sort-dir-desc");
+      sortDirToggle.classList.add("sort-dir-asc");
+      sortDirToggle.setAttribute("aria-label", "Aufsteigend sortieren");
+    } else {
+      sortDirToggle.textContent = "▼";
+      sortDirToggle.classList.remove("sort-dir-asc");
+      sortDirToggle.classList.add("sort-dir-desc");
+      sortDirToggle.setAttribute("aria-label", "Absteigend sortieren");
+    }
+
     updateView();
   });
 }
