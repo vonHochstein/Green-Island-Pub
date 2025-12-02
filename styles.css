@@ -642,45 +642,45 @@ body {
   }
 }
 
-/* Basis für alle Sterne */
+/* Sterne als Text-Glyphen mit CSS-Halbierung */
+
 .star {
   display: inline-block;
+  position: relative;
   width: 1.1rem;
   height: 1.1rem;
   margin-right: 0.05rem;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+  font-size: 1.05rem;
+  line-height: 1.1rem;
+  text-align: center;
 }
 
-/* Leerer Stern – nur Kontur, matt */
-.star.empty {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
-  opacity: 0.25;
-}
-
-/* Voller Stern – komplett gefüllt in Gold */
-.star.full {
-  background-image: url("data:image/svg+xml;utf8,<svg fill='rgb(212,177,90)' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
-  opacity: 1;
-  filter: drop-shadow(0 0 3px rgba(212,177,90,0.8));
-}
-
-/* Halber Stern – Kontur als Basis, linke Hälfte gefüllt */
-.star.half {
-  position: relative;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='none' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
-  opacity: 1;
-}
-
-/* Linke Hälfte als gefüllter Stern, normal groß, rechte Hälfte „abgeschnitten“ */
-.star.half::before {
-  content: "";
+/* Grundstern – leere Variante in mattgold */
+.star::after {
+  content: "★";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='rgb(212,177,90)' stroke='rgb(212,177,90)' stroke-width='1.5' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><polygon points='12 2 15 9 23 9 17 14 19 22 12 17 5 22 7 14 1 9 9 9 12 2' /></svg>");
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: 200% 100%; /* Star doppelt so breit „denken“ */
-  clip-path: inset(0 50% 0 0); /* rechte Hälfte abschneiden */
+  color: rgba(212, 177, 90, 0.25);
+}
+
+/* Voller Stern – einfach vollgold */
+.star.full::after {
+  color: rgb(212, 177, 90);
+  text-shadow: 0 0 3px rgba(212, 177, 90, 0.8);
+}
+
+/* Halber Stern: Basis ist leer (::after), linke Hälfte wird vollgold überlagert */
+.star.half::before {
+  content: "★";
+  position: absolute;
+  inset: 0;
+  color: rgb(212, 177, 90);
+  text-shadow: 0 0 3px rgba(212, 177, 90, 0.8);
+  /* nur linke Hälfte anzeigen */
+  clip-path: inset(0 50% 0 0);
+}
+
+/* Leerer Stern: nur der matte Grundstern (::after), nichts weiter */
+.star.empty::before {
+  content: "";
 }
