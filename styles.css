@@ -139,6 +139,16 @@ body {
   flex: 1 1 180px;
 }
 
+#searchInput {
+  padding: 0.65rem 0.9rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  font-size: 1rem; /* WICHTIG: 1rem ≈ 16px */
+  border: 1px solid rgba(63, 81, 68, 0.9);
+  background: rgba(7, 11, 8, 0.95);
+  color: var(--gold-text);
+}
+
 .filters input {
   flex: 1 1 220px;
   padding: 0.6rem 0.9rem;
@@ -194,7 +204,7 @@ body {
   border: 1px solid rgba(63, 81, 68, 0.9);
   background: rgba(7, 11, 8, 0.95);
   color: var(--gold-text);
-  font-size: 0.9rem;
+  font-size: 1rem;
 
   /* wichtig, damit das Dropdown optisch stabil wird */
   appearance: none;
