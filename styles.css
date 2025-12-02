@@ -174,12 +174,18 @@ body {
 }
 
 #sortFieldSelect {
-  padding: 0.3rem 0.5rem;
+  padding: 0.65rem 0.9rem;           /* gleiche innere Höhe wie Suchfeld */
+  height: 2.6rem;                    /* exakt gleiche Gesamthöhe */
+  line-height: 1rem;                 /* verhindert hochrutschen des Texts */
   border-radius: 999px;
   border: 1px solid rgba(63, 81, 68, 0.9);
   background: rgba(7, 11, 8, 0.95);
   color: var(--gold-text);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+
+  /* wichtig, damit das Dropdown optisch stabil wird */
+  appearance: none;
+  box-sizing: border-box;
 }
 
 .sort-dir {
