@@ -698,23 +698,45 @@ function updateView() {
   let list = [...allWhiskies];
 
   list.sort((a, b) => {
-    switch (currentSort) {
-      case "name_asc":
-        return (a.name || "").localeCompare(b.name || "");
-      case "name_desc":
-        return (b.name || "").localeCompare(a.name || "");
-      case "price_asc":
-        return (a.price_eur ?? 999999) - (b.price_eur ?? 999999);
-      case "price_desc":
-        return (b.price_eur ?? -1) - (a.price_eur ?? -1);
-      case "abv_asc":
-        return (a.abv ?? 0) - (b.abv ?? 0);
-      case "abv_desc":
-        return (b.abv ?? 0) - (a.abv ?? 0);
-      default:
-        return 0;
+  const getAvg = (w) => {
+    const stats = ratingStatsByWhisky[w.id];
+    return stats ? stats.avg : 0;
+  };
+
+  switch (currentSort) {
+    case "name_asc":
+      return (a.name || "").localeCompare(b.name || "");
+    case "name_desc":
+      return (b.name || "").localeCompare(a.name || "");
+
+    case "price_asc":
+      return (a.price_eur ?? 999999) - (b.price_eur ?? 999999);
+    case "price_desc":
+      return (b.price_eur ?? -1) - (a.price_eur ?? -1);
+
+    case "abv_asc":
+      return (a.abv ?? 0) - (b.abv ?? 0);
+    case "abv_desc":
+      return (b.abv ?? 0) - (a.abv ?? 0);
+
+    case "rating_desc": {
+      const ar = getAvg(a);
+      const br = getAvg(b);
+      // erst nach Bewertung, bei Gleichstand nach Name
+      if (br !== ar) return br - ar;
+      return (a.name || "").localeCompare(b.name || "");
     }
-  });
+    case "rating_asc": {
+      const ar = getAvg(a);
+      const br = getAvg(b);
+      if (ar !== br) return ar - br;
+      return (a.name || "").localeCompare(b.name || "");
+    }
+
+    default:
+      return 0;
+  }
+});
 
   if (q) {
     list = list.filter((w) => {
