@@ -554,10 +554,17 @@ function renderWhiskies(list) {
 
     const priceEl = document.createElement("div");
     priceEl.className = "whisky-price";
+    
+    const priceParts = [];
     if (w.price_eur != null) {
-      priceEl.textContent = `${w.price_eur.toFixed(2)} €`;
+      priceParts.push(`2 cl ${w.price_eur.toFixed(2)} €`);
     }
-
+    if (w.price_4cl_eur != null) {
+      priceParts.push(`4 cl ${w.price_4cl_eur.toFixed(2)} €`);
+    }
+    
+    priceEl.textContent = priceParts.join(" · ");
+    
     header.appendChild(nameEl);
     header.appendChild(priceEl);
 
@@ -642,8 +649,16 @@ function openDetail(w) {
   if (w.abv != null) parts.push(`${w.abv}% Vol.`);
   detailMeta.textContent = parts.join(" · ") || "Keine weiteren Angaben";
 
+  const priceParts = [];
   if (w.price_eur != null) {
-    detailPrice.textContent = `Preis im Pub: ${w.price_eur.toFixed(2)} €`;
+    priceParts.push(`2 cl ${w.price_eur.toFixed(2)} €`);
+  }
+  if (w.price_4cl_eur != null) {
+    priceParts.push(`4 cl ${w.price_4cl_eur.toFixed(2)} €`);
+  }
+  
+  if (priceParts.length) {
+    detailPrice.textContent = `Preis im Pub: ${priceParts.join(" · ")}`;
   } else {
     detailPrice.textContent = "";
   }
