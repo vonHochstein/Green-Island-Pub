@@ -901,20 +901,30 @@ if (ratingStars) {
   ratingStars.addEventListener("click", (event) => {
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
+
     const value = Number(target.getAttribute("data-value"));
     if (!value) return;
 
     if (!currentUser) {
-      if (ratingHint) {
-        ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
-      }
+      if (ratingHint) ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
       return;
     }
     if (!currentWhisky) return;
 
-    setRatingUI(value, ratingNote ? ratingNote.value : currentRatingNote);
+    // ⭐ Toggle-Logik
+    let newValue = value;
+    if (currentRatingValue === value) {
+      newValue = 0; // Bewertung zurücksetzen
+    }
+
+    setRatingUI(newValue, ratingNote ? ratingNote.value : currentRatingNote);
+
     if (ratingHint) {
-      ratingHint.textContent = "Bewertung noch nicht gespeichert.";
+      if (newValue === 0) {
+        ratingHint.textContent = "Bewertung zurückgesetzt.";
+      } else {
+        ratingHint.textContent = "Bewertung noch nicht gespeichert.";
+      }
     }
   });
 }
