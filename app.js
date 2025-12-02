@@ -86,7 +86,8 @@ const authMessage = document.getElementById("authMessage");
 
 // Zustand
 let allWhiskies = [];
-let currentSort = "name_asc";
+let currentSortField = "name";  // name, price, abv, rating_avg, rating_my
+let currentSortDir = "asc";     // asc | desc
 
 let currentUser = null;
 let authMode = "login";
