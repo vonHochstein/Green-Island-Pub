@@ -152,7 +152,7 @@ body {
 /* Sortierbereich unter/ neben dem Suchfeld */
 
 .sort-controls {
-  margin-top: 0.4rem;
+  margin-top: 0.3rem;   /* vorher 0.4rem ~ etwas zu weit weg */
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -215,7 +215,7 @@ body {
 /* AUTH-BAR + Fortschritt */
 
 .auth-bar {
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.45rem;   /* vorher 0.7rem – jetzt harmonischer */
   padding: 0.4rem 0.7rem;
   border-radius: 999px;
   background: rgba(5, 9, 7, 0.9);
