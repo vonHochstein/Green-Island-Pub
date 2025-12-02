@@ -182,6 +182,38 @@ function updateAuthUI() {
 
   refreshRatingSection();
   updateProgress();
+  updateSortOptionsForAuth();
+}
+
+function updateSortOptionsForAuth() {
+  if (!sortSelect) return;
+
+  const myOptions = Array.from(
+    sortSelect.querySelectorAll("option[data-scope='my']")
+  );
+
+  if (currentUser) {
+    // Eingeloggt: Optionen sichtbar & nutzbar
+    myOptions.forEach((opt) => {
+      opt.disabled = false;
+      opt.hidden = false;
+    });
+  } else {
+    // Wenn gerade eine „my“-Option aktiv ist → zurück auf Standard
+    if (
+      myOptions.some((opt) => opt.value === sortSelect.value)
+    ) {
+      sortSelect.value = "name_asc";
+      currentSort = "name_asc";
+      updateView();
+    }
+
+    // Ausloggen: Optionen ausblenden & deaktivieren
+    myOptions.forEach((opt) => {
+      opt.disabled = true;
+      opt.hidden = true;
+    });
+  }
 }
 
 function openAuthOverlay(mode) {
@@ -888,4 +920,5 @@ document.addEventListener("keydown", (event) => {
 
 // 7. Start
 loadUserFromStorage();
+updateSortOptionsForAuth();
 loadWhiskies();
