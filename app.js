@@ -697,10 +697,17 @@ function updateView() {
 
   let list = [...allWhiskies];
 
-  list.sort((a, b) => {
+list.sort((a, b) => {
   const getAvg = (w) => {
     const stats = ratingStatsByWhisky[w.id];
     return stats ? stats.avg : 0;
+  };
+
+  const getMy = (w) => {
+    // Wenn kein Nutzer angemeldet: immer 0
+    if (!currentUser) return 0;
+    const r = myRatingsByWhisky[w.id];
+    return r ? Number(r) : 0;
   };
 
   switch (currentSort) {
@@ -719,16 +726,31 @@ function updateView() {
     case "abv_desc":
       return (b.abv ?? 0) - (a.abv ?? 0);
 
-    case "rating_desc": {
+    // ➤ Globale Durchschnittsbewertung
+    case "rating_avg_desc": {
       const ar = getAvg(a);
       const br = getAvg(b);
-      // erst nach Bewertung, bei Gleichstand nach Name
       if (br !== ar) return br - ar;
       return (a.name || "").localeCompare(b.name || "");
     }
-    case "rating_asc": {
+    case "rating_avg_asc": {
       const ar = getAvg(a);
       const br = getAvg(b);
+      if (ar !== br) return ar - br;
+      return (a.name || "").localeCompare(b.name || "");
+    }
+
+    // ➤ Deine individuelle Bewertung
+    case "rating_my_desc": {
+      const ar = getMy(a);
+      const br = getMy(b);
+      if (br !== ar) return br - ar;
+      // Bei Gleichstand nach Name
+      return (a.name || "").localeCompare(b.name || "");
+    }
+    case "rating_my_asc": {
+      const ar = getMy(a);
+      const br = getMy(b);
       if (ar !== br) return ar - br;
       return (a.name || "").localeCompare(b.name || "");
     }
