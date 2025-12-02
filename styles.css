@@ -170,7 +170,7 @@ body {
   color: var(--gold-text);
   font-size: 0.9rem;
   appearance: none;
-  box-sizing: border-box;
+  box-sizing: 100%; /*border-box
 }
 
 #sortFieldSelect:focus {
