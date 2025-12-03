@@ -774,3 +774,70 @@ body {
 .star.empty::before {
   content: "";
 }
+
+/* 🎲 Random-Button in der Filterleiste */
+.btn-random {
+  border-radius: 999px;
+  border: 1px solid rgba(188, 165, 106, 0.9);
+  background: rgba(13, 20, 15, 0.98);
+  color: var(--gold-text);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-random:hover {
+  border-color: var(--gold-main);
+  background: rgba(18, 27, 20, 0.98);
+}
+
+/* 🎲 Zufalls-Overlay – leichte Anpassungen */
+.random-panel h2 {
+  margin: 0.2rem 0 0.4rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--gold-main);
+}
+
+.random-content {
+  font-size: 0.9rem;
+  color: var(--gold-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+
+.random-content h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  color: var(--gold-main);
+}
+
+.random-content p {
+  margin: 0.08rem 0;
+}
+
+.random-content .random-meta {
+  font-size: 0.82rem;
+  color: var(--gold-muted);
+}
+
+.random-content .random-notes {
+  font-size: 0.86rem;
+  color: var(--gold-text);
+}
+
+.random-actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+  margin-top: 0.2rem;
+}
+
+.random-empty {
+  font-size: 0.86rem;
+  color: var(--gold-muted);
+}
