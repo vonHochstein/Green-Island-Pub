@@ -847,3 +847,47 @@ body {
   font-size: 0.86rem;
   color: var(--gold-muted);
 }
+
+.random-whisky-card {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.random-image-wrapper {
+  flex: 0 0 110px;
+}
+
+.random-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.35rem;
+  object-fit: cover;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.random-text {
+  flex: 1;
+}
+
+.random-rating {
+  margin: 0.15rem 0 0.3rem;
+  font-size: 0.86rem;
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.random-stars .star {
+  margin-right: 1px;
+}
+
+.random-rating-count {
+  font-size: 0.8rem;
+  color: var(--gold-muted);
+}
+
+.random-rating-empty {
+  color: var(--gold-muted);
+}
