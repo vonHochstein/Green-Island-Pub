@@ -451,13 +451,12 @@ async function saveCurrentRating() {
     currentRatingNote = ratingNote.value.trim();
   }
 
-  if (!currentRatingValue) {
-    ratingHint.textContent = "Bitte mindestens einen Stern vergeben.";
-    return;
-  }
-
+  // Kein Zwang mehr zu mindestens einem Stern:
+  // rating kann jetzt 0 sein, Note kann leer oder Text sein.
   try {
-    ratingHint.textContent = "Speichere Bewertung …";
+    if (ratingHint) {
+      ratingHint.textContent = "Speichere Bewertung …";
+    }
 
     const { error } = await supabaseClient
       .from("ratings_green_island")
@@ -465,8 +464,8 @@ async function saveCurrentRating() {
         {
           user_id: currentUser.id,
           whisky_id: currentWhisky.id,
-          rating: currentRatingValue,
-          notes: currentRatingNote
+          rating: currentRatingValue,   // 0 = "keine Sterne"
+          notes: currentRatingNote      // "" oder Text
         },
         {
           onConflict: "user_id,whisky_id"
@@ -475,15 +474,26 @@ async function saveCurrentRating() {
 
     if (error) {
       console.error(error);
-      ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
+      if (ratingHint) {
+        ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
+      }
       return;
     }
 
-    ratingHint.textContent = "Bewertung gespeichert.";
+    if (ratingHint) {
+      if (!currentRatingValue && !currentRatingNote) {
+        ratingHint.textContent = "Eintrag ohne Bewertung gespeichert.";
+      } else {
+        ratingHint.textContent = "Bewertung gespeichert.";
+      }
+    }
+
     loadRatingStats();
   } catch (err) {
     console.error(err);
-    ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
+    if (ratingHint) {
+      ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
+    }
   }
 }
 
