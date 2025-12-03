@@ -66,6 +66,15 @@
         >
           ▲
         </button>
+
+        <!-- 🎲 Random-Button -->
+        <button
+          id="btnRandomWhisky"
+          class="btn-random"
+          type="button"
+        >
+          🎲 Überrasch mich
+        </button>
       </div>
     </section>
 
@@ -119,6 +128,30 @@
             Bitte anmelden, um zu bewerten.
           </p>
         </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- 🎲 Overlay für Zufalls-Whisky -->
+  <div id="randomOverlay" class="detail-overlay" aria-hidden="true">
+    <div class="detail-backdrop" id="randomBackdrop"></div>
+
+    <article class="detail-panel random-panel">
+      <button class="detail-close" id="randomClose" aria-label="Schließen">×</button>
+
+      <h2>Zufalls-Whisky</h2>
+
+      <div id="randomContent" class="random-content">
+        <!-- Inhalt wird per JS gesetzt -->
+      </div>
+
+      <div class="random-actions">
+        <button type="button" id="btnRandomNext" class="rating-save">
+          Noch ein Vorschlag
+        </button>
+        <button type="button" id="btnRandomClose" class="rating-save">
+          Schließen
+        </button>
       </div>
     </article>
   </div>
