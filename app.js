@@ -55,6 +55,7 @@ const detailClose = document.getElementById("detailClose");
 const detailImage = document.getElementById("detailImage");
 const detailName = document.getElementById("detailName");
 const detailMeta = document.getElementById("detailMeta");
+const detailRatingSummary = document.getElementById("detailRatingSummary");
 const detailPrice = document.getElementById("detailPrice");
 const detailDescription = document.getElementById("detailDescription");
 
@@ -195,9 +196,10 @@ function updateAuthUI() {
     if (progressSection) progressSection.classList.add("hidden");
   }
 
+  updateSortOptionsForAuth();
   refreshRatingSection();
   updateProgress();
-  updateSortOptionsForAuth();
+  updateView();
 }
 
 function updateSortOptionsForAuth() {
@@ -216,9 +218,7 @@ function updateSortOptionsForAuth() {
     if (sortFieldSelect.value === "rating_my") {
       sortFieldSelect.value = "name";
       currentSortField = "name";
-      updateView();
     }
-
     myOptions.forEach((opt) => {
       opt.disabled = true;
       opt.hidden = true;
@@ -376,45 +376,31 @@ function setRatingUI(value, note) {
   }
 }
 
+// Bewertungsbereich nur für angemeldete Nutzer sichtbar
 function refreshRatingSection() {
-  if (!ratingSection || !ratingHint) return;
+  if (!ratingSection) return;
 
   if (!currentUser) {
-    if (ratingStars) {
-      const buttons = ratingStars.querySelectorAll("button[data-value]");
-      buttons.forEach((btn) => {
-        btn.disabled = true;
-        btn.classList.remove("is-active");
-      });
-    }
-    if (ratingNote) {
-      ratingNote.disabled = true;
-      ratingNote.value = "";
-    }
-    if (ratingSave) {
-      ratingSave.disabled = true;
-    }
-    ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
-  } else {
-    if (ratingStars) {
-      const buttons = ratingStars.querySelectorAll("button[data-value]");
-      buttons.forEach((btn) => {
-        btn.disabled = false;
-      });
-    }
-    if (ratingNote) {
-      ratingNote.disabled = false;
-    }
-    if (ratingSave) {
-      ratingSave.disabled = false;
-    }
+    ratingSection.classList.add("hidden");
+    return;
+  }
 
-    if (currentWhisky) {
-      loadCurrentUserRatingForCurrentWhisky();
-    } else {
-      setRatingUI(0, "");
-      ratingHint.textContent = "Gib deine persönliche Bewertung ab.";
-    }
+  ratingSection.classList.remove("hidden");
+
+  if (ratingStars) {
+    const buttons = ratingStars.querySelectorAll("button[data-value]");
+    buttons.forEach((btn) => {
+      btn.disabled = false;
+    });
+  }
+  if (ratingNote) ratingNote.disabled = false;
+  if (ratingSave) ratingSave.disabled = false;
+
+  if (currentWhisky) {
+    loadCurrentUserRatingForCurrentWhisky();
+  } else {
+    setRatingUI(0, "");
+    if (ratingHint) ratingHint.textContent = "Gib deine persönliche Bewertung ab.";
   }
 }
 
@@ -432,30 +418,27 @@ async function loadCurrentUserRatingForCurrentWhisky() {
     if (error) {
       console.error(error);
       setRatingUI(0, "");
-      ratingHint.textContent = "Bewertung konnte nicht geladen werden.";
+      if (ratingHint) ratingHint.textContent = "Bewertung konnte nicht geladen werden.";
       return;
     }
 
     const rating = data && data[0];
     if (rating) {
       setRatingUI(rating.rating || 0, rating.notes || "");
-      ratingHint.textContent = "Deine gespeicherte Bewertung.";
+      if (ratingHint) ratingHint.textContent = "Deine gespeicherte Bewertung.";
     } else {
       setRatingUI(0, "");
-      ratingHint.textContent = "Gib deine persönliche Bewertung ab.";
+      if (ratingHint) ratingHint.textContent = "Gib deine persönliche Bewertung ab.";
     }
   } catch (err) {
     console.error(err);
     setRatingUI(0, "");
-    ratingHint.textContent = "Bewertung konnte nicht geladen werden.";
+    if (ratingHint) ratingHint.textContent = "Bewertung konnte nicht geladen werden.";
   }
 }
 
 async function saveCurrentRating() {
   if (!currentUser || !currentWhisky) {
-    if (ratingHint) {
-      ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
-    }
     return;
   }
 
@@ -478,8 +461,8 @@ async function saveCurrentRating() {
         {
           user_id: currentUser.id,
           whisky_id: currentWhisky.id,
-          rating: ratingToStore,     // kann jetzt auch null sein
-          notes: currentRatingNote   // "" oder Text
+          rating: ratingToStore,     // kann auch null sein
+          notes: currentRatingNote
         },
         {
           onConflict: "user_id,whisky_id"
@@ -535,12 +518,12 @@ async function loadRatingStats() {
       for (const row of data) {
         const wid = row.whisky_id;
         const rawRating = row.rating;
-        
-        // wenn rating NULL ist → wir zählen diesen Eintrag nicht als Sterne-Bewertung
+
+        // rating NULL -> keine Sternbewertung
         if (!wid || rawRating === null || rawRating === undefined) continue;
-        
+
         const r = Number(rawRating);
-        if (!r) continue; // Fallback-Schutz, falls irgendwas Schräges drinsteht
+        if (!r) continue;
 
         if (!stats[wid]) stats[wid] = { sum: 0, count: 0, avg: 0 };
         stats[wid].sum += r;
@@ -568,6 +551,7 @@ async function loadRatingStats() {
 }
 
 // 3. Whiskys laden
+
 async function loadWhiskies() {
   if (statusEl) statusEl.textContent = "Lade Whiskys …";
 
@@ -594,6 +578,7 @@ async function loadWhiskies() {
 }
 
 // 4. Whiskys rendern
+
 function renderWhiskies(list) {
   if (!whiskyGrid) return;
 
@@ -698,6 +683,7 @@ function renderWhiskies(list) {
 }
 
 // Detail öffnen/schließen
+
 function openDetail(w) {
   if (!detailOverlay) return;
 
@@ -716,6 +702,16 @@ function openDetail(w) {
   if (w.style) parts.push(w.style);
   if (w.abv != null) parts.push(`${w.abv}% Vol.`);
   detailMeta.textContent = parts.join(" · ") || "Keine weiteren Angaben";
+
+  // Durchschnittsbewertung in der Detailkarte
+  const stats = ratingStatsByWhisky[w.id];
+  if (stats && stats.count > 0) {
+    const avgRounded = Math.round(stats.avg * 10) / 10;
+    detailRatingSummary.innerHTML =
+      `Ø ${avgRounded.toFixed(1)} ${renderStars(stats.avg)} (${stats.count})`;
+  } else {
+    detailRatingSummary.textContent = "Noch keine Bewertungen.";
+  }
 
   const priceParts = [];
   if (w.price_eur != null) {
@@ -886,6 +882,7 @@ function closeRandomOverlay() {
 }
 
 // 5. Suche + Sortierung
+
 function updateView() {
   const q = (searchInput?.value || "").toLowerCase().trim();
 
@@ -1072,7 +1069,7 @@ if (ratingStars) {
     if (!value) return;
 
     if (!currentUser) {
-      if (ratingHint) ratingHint.textContent = "Bitte anmelden, um zu bewerten.";
+      // Ratingbereich ist eh versteckt, aber falls wir hier landen
       return;
     }
     if (!currentWhisky) return;
