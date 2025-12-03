@@ -85,6 +85,15 @@ const switchToRegister = document.getElementById("switchToRegister");
 const switchToLogin = document.getElementById("switchToLogin");
 const authMessage = document.getElementById("authMessage");
 
+// 🎲 Random-Overlay-Elemente
+const randomOverlay = document.getElementById("randomOverlay");
+const randomBackdrop = document.getElementById("randomBackdrop");
+const randomClose = document.getElementById("randomClose");
+const randomContent = document.getElementById("randomContent");
+const btnRandomWhisky = document.getElementById("btnRandomWhisky");
+const btnRandomNext = document.getElementById("btnRandomNext");
+const btnRandomClose = document.getElementById("btnRandomClose");
+
 // Zustand
 let allWhiskies = [];
 let currentSortField = "name";  // name, price, abv, rating_avg, rating_my
@@ -100,7 +109,10 @@ let currentRatingNote = "";
 
 // Rating-Übersichten
 let ratingStatsByWhisky = {}; // whisky_id -> { sum, count, avg }
-let myRatingsByWhisky = {};   // whisky_id -> rating
+let myRatingsByWhisky = {};   // whisky_id -> rating (nur mit Sternen)
+
+// 🎲 Zustand für Zufalls-Auswahl
+let lastRandomWhiskyId = null;
 
 // --- Auth-Helfer ---
 
@@ -738,6 +750,108 @@ function closeDetail() {
   setRatingUI(0, "");
 }
 
+// 🎲 Zufalls-Whisky-Logik
+
+// Pool: falls eingeloggter Nutzer → nur Whiskys ohne eigene Sternbewertung
+// sonst: alle aktiven Whiskys
+function getRandomWhiskyPool() {
+  if (!allWhiskies || allWhiskies.length === 0) return [];
+
+  if (!currentUser) {
+    return allWhiskies.slice();
+  }
+
+  // nur Whiskys, die der aktuelle Nutzer noch nicht mit Sternen bewertet hat
+  return allWhiskies.filter((w) => !myRatingsByWhisky[w.id]);
+}
+
+function pickRandomWhisky(excludeId = null) {
+  let pool = getRandomWhiskyPool();
+
+  if (excludeId) {
+    pool = pool.filter((w) => w.id !== excludeId);
+  }
+
+  if (!pool.length) return null;
+
+  const index = Math.floor(Math.random() * pool.length);
+  return pool[index];
+}
+
+function renderRandomWhisky(w) {
+  if (!randomContent) return;
+
+  if (!w) {
+    randomContent.innerHTML = `
+      <p class="random-empty">
+        Es gibt aktuell keine weiteren Vorschläge.
+      </p>
+      <p class="random-empty">
+        Entweder sind keine Whiskys hinterlegt oder du hast bereits alle bewertet.
+      </p>
+    `;
+    return;
+  }
+
+  const metaParts = [];
+  if (w.distillery) metaParts.push(w.distillery);
+  if (w.origin_country) metaParts.push(w.origin_country);
+  if (w.style) metaParts.push(w.style);
+  if (w.abv != null) metaParts.push(`${w.abv}% Vol.`);
+
+  const priceParts = [];
+  if (w.price_eur != null) {
+    priceParts.push(`2 cl ${w.price_eur.toFixed(2)} €`);
+  }
+  if (w.price_4cl_eur != null) {
+    priceParts.push(`4 cl ${w.price_4cl_eur.toFixed(2)} €`);
+  }
+
+  randomContent.innerHTML = `
+    <div class="random-whisky-card">
+      <h3>${w.name || "Unbekannter Whisky"}</h3>
+      <p class="random-meta">${metaParts.join(" · ") || "Keine weiteren Angaben"}</p>
+      ${
+        priceParts.length
+          ? `<p><strong>Preis im Pub:</strong> ${priceParts.join(" · ")}</p>`
+          : ""
+      }
+      ${
+        w.description
+          ? `<p class="random-notes">${w.description}</p>`
+          : `<p class="random-notes">Für diesen Whisky liegt noch keine Beschreibung vor.</p>`
+      }
+    </div>
+  `;
+}
+
+function showRandomWhisky() {
+  const whisky = pickRandomWhisky(lastRandomWhiskyId);
+
+  if (!whisky) {
+    lastRandomWhiskyId = null;
+    renderRandomWhisky(null);
+    return;
+  }
+
+  lastRandomWhiskyId = whisky.id;
+  renderRandomWhisky(whisky);
+}
+
+function openRandomOverlay() {
+  if (!randomOverlay) return;
+  lastRandomWhiskyId = null;
+  showRandomWhisky();
+  randomOverlay.classList.add("is-visible");
+  randomOverlay.setAttribute("aria-hidden", "false");
+}
+
+function closeRandomOverlay() {
+  if (!randomOverlay) return;
+  randomOverlay.classList.remove("is-visible");
+  randomOverlay.setAttribute("aria-hidden", "true");
+}
+
 // 5. Suche + Sortierung
 function updateView() {
   const q = (searchInput?.value || "").toLowerCase().trim();
@@ -954,11 +1068,43 @@ if (ratingSave) {
   });
 }
 
-// ESC-Taste: beide Overlays schließen
+// 🎲 Random-Events
+if (btnRandomWhisky) {
+  btnRandomWhisky.addEventListener("click", () => {
+    openRandomOverlay();
+  });
+}
+
+if (btnRandomNext) {
+  btnRandomNext.addEventListener("click", () => {
+    showRandomWhisky();
+  });
+}
+
+if (btnRandomClose) {
+  btnRandomClose.addEventListener("click", () => {
+    closeRandomOverlay();
+  });
+}
+
+if (randomClose) {
+  randomClose.addEventListener("click", () => {
+    closeRandomOverlay();
+  });
+}
+
+if (randomBackdrop) {
+  randomBackdrop.addEventListener("click", () => {
+    closeRandomOverlay();
+  });
+}
+
+// ESC-Taste: alle Overlays schließen
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeDetail();
     closeAuthOverlay();
+    closeRandomOverlay();
   }
 });
 
