@@ -807,20 +807,53 @@ function renderRandomWhisky(w) {
     priceParts.push(`4 cl ${w.price_4cl_eur.toFixed(2)} €`);
   }
 
+  // Durchschnittsbewertung aus ratingStatsByWhisky holen
+  const stats = ratingStatsByWhisky[w.id];
+  let ratingHtml = "";
+
+  if (stats && stats.count > 0) {
+    const avgRounded = Math.round(stats.avg * 10) / 10;
+    ratingHtml = `
+      <p class="random-rating">
+        Ø ${avgRounded.toFixed(1)}
+        <span class="random-stars">${renderStars(stats.avg)}</span>
+        <span class="random-rating-count">(${stats.count})</span>
+      </p>
+    `;
+  } else {
+    ratingHtml = `
+      <p class="random-rating random-rating-empty">
+        Noch keine Bewertungen.
+      </p>
+    `;
+  }
+
+  const imgSrc =
+    w.image_url ||
+    "https://dummyimage.com/400x260/111111/ffffff&text=Whisky";
+
   randomContent.innerHTML = `
     <div class="random-whisky-card">
-      <h3>${w.name || "Unbekannter Whisky"}</h3>
-      <p class="random-meta">${metaParts.join(" · ") || "Keine weiteren Angaben"}</p>
-      ${
-        priceParts.length
-          ? `<p><strong>Preis im Pub:</strong> ${priceParts.join(" · ")}</p>`
-          : ""
-      }
-      ${
-        w.description
-          ? `<p class="random-notes">${w.description}</p>`
-          : `<p class="random-notes">Für diesen Whisky liegt noch keine Beschreibung vor.</p>`
-      }
+      <div class="random-image-wrapper">
+        <img src="${imgSrc}" alt="${w.name || "Whisky"}" />
+      </div>
+      <div class="random-text">
+        <h3>${w.name || "Unbekannter Whisky"}</h3>
+        <p class="random-meta">
+          ${metaParts.join(" · ") || "Keine weiteren Angaben"}
+        </p>
+        ${ratingHtml}
+        ${
+          priceParts.length
+            ? `<p><strong>Preis im Pub:</strong> ${priceParts.join(" · ")}</p>`
+            : ""
+        }
+        ${
+          w.description
+            ? `<p class="random-notes">${w.description}</p>`
+            : `<p class="random-notes">Für diesen Whisky liegt noch keine Beschreibung vor.</p>`
+        }
+      </div>
     </div>
   `;
 }
