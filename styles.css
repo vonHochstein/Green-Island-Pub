@@ -781,10 +781,16 @@ body {
   border: 1px solid rgba(188, 165, 106, 0.9);
   background: rgba(13, 20, 15, 0.98);
   color: var(--gold-text);
-  font-size: 0.85rem;
-  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  padding: 0 0.9rem;
   cursor: pointer;
   white-space: nowrap;
+
+  /* Höhe & Ausrichtung wie Eingabefelder */
+  height: 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-random:hover {
