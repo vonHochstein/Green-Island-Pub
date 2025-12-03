@@ -23,23 +23,17 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  background: #020403;
+  min-height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #020403; /* Fallback-Hintergrund überall */
   color: var(--gold-text);
 }
-
-body {
-  min-height: 100vh;
-}
-
-/* HINTERGRUND-EFFEKT */
 
 body {
   background:
     radial-gradient(
       circle at top left,
-      rgba(50, 90, 65, 0.5),
+      rgba(37, 68, 49, 0.35),
       rgba(3, 7, 5, 0.96) 55%
     ),
     radial-gradient(
@@ -54,25 +48,19 @@ body {
   display: none !important;
 }
 
-/* HEADER – im Stil eines Pubschildes */
+/* HEADER – integriert in den Hintergrund, nicht abgesetzt */
 
 .site-header {
-  background: radial-gradient(circle at top, #1f2f26, #050806);
-  border-bottom: 1px solid rgba(212, 177, 90, 0.35);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.85);
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  padding: 1rem 1rem 0.4rem;
 }
 
 .header-inner {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0.7rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .brand {
@@ -82,442 +70,558 @@ body {
 }
 
 .brand-mark {
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 177, 90, 0.8);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 177, 90, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 30% 20%, #2f4d39, #050806);
-  color: var(--gold-text);
   font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: 0.08em;
+  font-size: 0.9rem;
+  color: var(--gold-main);
+  background:
+    radial-gradient(circle at 30% 20%, #203122, var(--green-forest) 60%, #020403 100%);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
 .brand-text h1 {
   margin: 0;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
+  font-size: 1.25rem;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold-main);
 }
 
 .brand-text p {
-  margin: 0.1rem 0 0;
-  font-size: 0.8rem;
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
   color: var(--gold-muted);
 }
 
 .header-badge {
-  border-radius: 999px;
-  border: 1px solid rgba(212, 177, 90, 0.6);
-  padding: 0.15rem 0.7rem;
   font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--gold-text);
-  background: rgba(10, 16, 12, 0.9);
+  letter-spacing: 0.16em;
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 177, 90, 0.6);
+  color: var(--gold-main);
+  background: rgba(5, 8, 6, 0.6);
 }
 
-/* LAYOUT WRAPPER */
+/* LAYOUT */
 
 .wrapper {
-  max-width: 1200px;
-  margin: 1rem auto 2rem;
-  padding: 0 1rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0.8rem 1rem 1.2rem;
 }
 
-/* AUTH-LEISTE */
+/* FILTER-BEREICH – Layout */
+
+/* Grundlayout: Spalte (mobile), alles 100% Breite */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Jedes direkte Kind der .filters (Suchfeld + Sortierblock) nimmt volle Breite */
+.filters > * {
+  width: 100%;
+}
+
+/* Suchfeld */
+
+#searchInput {
+  padding: 0.65rem 0.9rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  font-size: 1rem;
+  border: 1px solid rgba(63, 81, 68, 0.9);
+  background: rgba(7, 11, 8, 0.95);
+  color: var(--gold-text);
+  box-sizing: border-box;
+}
+
+#searchInput::placeholder {
+  color: rgba(188, 165, 106, 0.7);
+}
+
+#searchInput:focus {
+  outline: none;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
+  background: #050805;
+}
+
+/* Sortierbereich unter/ neben dem Suchfeld */
+
+/* Sortier-Block: Dropdown + Button */
+.sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;              /* wichtig: Gesamtblock = 100% */
+}
+
+/* Dropdown füllt den Platz, Button bleibt kompakt */
+#sortFieldSelect {
+  flex: 1 1 auto;
+  padding: 0.65rem 0.9rem;
+  height: 2.6rem;
+  line-height: 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 81, 68, 0.9);
+  background: rgba(7, 11, 8, 0.95);
+  color: var(--gold-text);
+  font-size: 0.9rem;
+  appearance: none;
+  box-sizing: border-box;
+}
+
+#sortFieldSelect:focus {
+  outline: none;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
+  background: #050805;
+}
+
+/* Button für Auf/Absteigend */
+
+.sort-dir {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(63, 81, 68, 0.9);
+  background: rgba(7, 11, 8, 0.95);
+  color: var(--gold-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sort-dir-asc {
+  /* ▲ ist schon gesetzt, hier könntest du später optisch hervorheben */
+}
+
+.sort-dir-desc {
+  /* ▼-Variante – wir wechseln die Klasse im JS */
+}
+
+/* Mobile-Finetuning – bei ganz schmalen Screens alles linksbündig, aber volle Breite */
+@media (max-width: 600px) {
+  .filters {
+    gap: 0.4rem;
+  }
+
+  .sort-controls {
+    justify-content: flex-start;
+  }
+}
+
+/* Ab mittlerer Breite (Querformat / Tablet etc.) – Suchfeld und Sortierblock nebeneinander */
+@media (min-width: 720px) {
+  .filters {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .filters > * {
+    width: auto;
+    flex: 1 1 0;
+  }
+
+  /* Sortierblock nach rechts schieben, wirkt wie „Toolbar“ */
+  .sort-controls {
+    justify-content: flex-end;
+  }
+}
+
+/* AUTH-BAR + Fortschritt */
 
 .auth-bar {
+  margin-bottom: 0.45rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 12px;
+  background: rgba(5, 9, 7, 0.9);
+  border: 1px solid rgba(63, 81, 68, 0.85);
   display: flex;
-  align-items: flex-start;
+  align-items: center;          /* war: flex-start */
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 0.6rem 0.8rem;
-  margin-bottom: 0.8rem;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(39, 50, 40, 0.9);
-  background: linear-gradient(
-    to bottom right,
-    rgba(9, 16, 12, 0.9),
-    rgba(12, 24, 18, 0.95)
-  );
+  gap: 0.7rem;
+  font-size: 0.8rem;
+  color: var(--gold-muted);
 }
 
 .auth-info {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  min-width: 0;
-}
-
-#authStatus {
-  font-size: 0.86rem;
-  color: var(--gold-text);
+  gap: 0.2rem;
 }
 
 .auth-actions {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.4rem;
 }
 
 .auth-actions button {
-  border-radius: 999px;
-  border: 1px solid rgba(188, 165, 106, 0.9);
-  background: rgba(12, 18, 13, 0.98);
+  border-radius: 12px;
+  border: 1px solid rgba(188, 165, 106, 0.7);
+  background: rgba(10, 15, 11, 0.95);
   color: var(--gold-text);
-  font-size: 0.82rem;
-  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  padding: 0.28rem 0.7rem;
   cursor: pointer;
 }
 
 .auth-actions button:hover {
-  background: rgba(23, 34, 25, 0.98);
+  border-color: var(--gold-main);
 }
 
-/* Fortschritt in der Auth-Bar */
-
 .auth-progress {
-  max-width: 400px;
+  margin-top: 0.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .progress-text {
-  margin: 0;
   font-size: 0.8rem;
-  color: var(--gold-muted);
+  color: var(--gold-text);
+  margin-bottom: 0.3rem;
 }
 
 .progress-bar-wrapper {
-  margin-top: 0.25rem;
   width: 100%;
-  height: 0.45rem;
-  border-radius: 999px;
-  background: rgba(9, 14, 10, 0.9);
+  height: 8px;
+  border-radius: 12px;
+  background: rgba(50, 60, 50, 0.7);
   overflow: hidden;
 }
 
 .progress-bar {
   height: 100%;
-  width: 0;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    rgba(212, 177, 90, 1),
-    rgba(230, 214, 160, 0.95)
+  background: linear-gradient(90deg,
+    rgba(212, 177, 90, 0.7),
+    rgba(212, 177, 90, 1)
   );
-  transition: width 0.3s ease-out;
-}
-
-/* FILTER / SUCHE / SORTIERUNG */
-
-.filters {
-  margin-bottom: 0.8rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  align-items: center;
-  justify-content: space-between;
-}
-
-#searchInput {
-  flex: 1 1 280px;
-  min-width: 0;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid rgba(39, 50, 40, 0.9);
-  background: rgba(7, 12, 8, 0.98);
-  color: var(--gold-text);
-  font-size: 0.9rem;
-}
-
-#searchInput::placeholder {
-  color: rgba(188, 165, 106, 0.6);
-}
-
-.sort-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-}
-
-#sortFieldSelect {
-  padding: 0.35rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid rgba(39, 50, 40, 0.9);
-  background: rgba(7, 12, 8, 0.98);
-  color: var(--gold-text);
-  font-size: 0.85rem;
-}
-
-.sort-dir {
-  width: 2.2rem;
-  height: 2.2rem;
-  border-radius: 999px;
-  border: 1px solid rgba(39, 50, 40, 0.9);
-  background: rgba(7, 12, 8, 0.98);
-  color: var(--gold-text);
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.sort-dir-asc::after {
-  content: "";
-}
-
-.sort-dir-desc::after {
-  content: "";
+  width: 0%;
+  transition: width 0.4s ease;
 }
 
 /* STATUS */
 
 .status {
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   color: var(--gold-muted);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.7rem;
 }
 
 /* GRID */
 
 .whisky-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 0.85rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
 }
 
-/* KARTE */
+/* KARTEN */
 
 .whisky-card {
-  position: relative;
-  border-radius: 0.9rem;
-  overflow: hidden;
-  border: 1px solid rgba(39, 50, 40, 0.85);
-  background: radial-gradient(circle at top, #15251b, #050806);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9);
-  cursor: pointer;
+  background:
+    linear-gradient(145deg, rgba(16, 30, 23, 0.96), rgba(6, 11, 8, 0.98));
+  border-radius: 10px;
+  padding: 0.7rem;
+  border: 1px solid rgba(63, 81, 68, 0.8);
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.65);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border 0.18s ease;
+}
+
+.whisky-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(212, 177, 90, 0.14), transparent 60%);
+  pointer-events: none;
+}
+
+.whisky-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 177, 90, 0.6);
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.8);
 }
 
 .whisky-card img {
   width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  display: block;
+  height: 220px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: radial-gradient(circle at center, #111c14, #030504);
 }
+
+/* TEXT IN DER KARTE */
 
 .whisky-header {
   display: flex;
   justify-content: space-between;
-  gap: 0.4rem;
-  padding: 0.45rem 0.6rem 0.2rem;
+  gap: 0.5rem;
   align-items: baseline;
+  margin-top: 0.3rem;
 }
 
 .whisky-name {
-  font-size: 0.95rem;
   font-weight: 600;
+  font-size: 0.96rem;
   color: var(--gold-main);
 }
 
 .whisky-price {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--gold-text);
   white-space: nowrap;
 }
 
 .whisky-meta {
-  padding: 0 0.6rem;
   font-size: 0.78rem;
   color: var(--gold-muted);
 }
 
 .whisky-desc {
-  padding: 0.25rem 0.6rem 0.5rem;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--gold-text);
 }
-
-/* Badge "Demo" */
-
-.badge {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 177, 90, 0.85);
-  padding: 0.1rem 0.5rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: rgba(5, 8, 6, 0.85);
-  color: var(--gold-text);
-}
-
-/* Zusammenfassung unter Karte */
 
 .whisky-rating-summary {
-  padding: 0.3rem 0.6rem 0.5rem;
+  margin-top: 0.25rem;
   font-size: 0.78rem;
   color: var(--gold-muted);
 }
 
-/* DETAIL-OVERLAY */
+/* BADGE */
 
-.detail-overlay {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
+.badge {
+  align-self: flex-start;
+  display: inline-block;
+  padding: 0.16rem 0.6rem;
+  border-radius: 12px;
+  border: 1px solid rgba(114, 128, 112, 0.9);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold-muted);
+  background: rgba(5, 7, 6, 0.85);
+  margin-top: 0.15rem;
 }
 
-.detail-overlay.is-visible {
-  display: flex;
+/* RESPONSIVE */
+
+@media (max-width: 600px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .brand-text h1 {
+    font-size: 1.05rem;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 0.8rem;
+  }
+
+  .wrapper {
+    padding: 0.6rem 0.8rem 1rem;
+  }
+
+  .whisky-card img {
+    height: 190px;
+  }
+}
+
+/* DETAIL-OVERLAY */
+
+.detail-overlay,
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none; /* wird per JS auf block gesetzt */
+}
+
+.detail-overlay.is-visible,
+.auth-overlay.is-visible {
+  display: block;
 }
 
 .detail-backdrop {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top, rgba(0, 0, 0, 0.8), #000000);
-  backdrop-filter: blur(4px);
+  background: radial-gradient(circle at top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.95));
+  backdrop-filter: blur(3px);
 }
 
-.detail-panel {
+/* Panel-Design für Detail & Auth */
+.detail-panel,
+.auth-panel {
   position: relative;
-  max-width: 900px;
-  width: 100%;
-  margin: 0 1rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(212, 177, 90, 0.5);
-  background: radial-gradient(circle at top, #18271e, #050806);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.95);
+  max-width: 420px;
+  width: calc(100% - 2rem);
+  box-sizing: border-box;
+  margin: 3.5rem auto 2rem;
+  padding: 0.8rem 0.9rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(14, 26, 20, 0.98), rgba(5, 9, 7, 0.99));
+  border: 1px solid rgba(212, 177, 90, 0.7);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
   display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  z-index: 101;
+  flex-direction: column;
+  gap: 0.7rem;
 }
 
 .detail-close {
   position: absolute;
-  top: 0.6rem;
-  right: 0.6rem;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 177, 90, 0.6);
-  background: rgba(7, 12, 8, 0.98);
-  color: var(--gold-text);
+  top: 0.35rem;
+  right: 0.4rem;
+  border: none;
+  background: transparent;
+  color: var(--gold-main);
+  font-size: 1.4rem;
   cursor: pointer;
+  padding: 0.1rem 0.25rem;
+}
+
+.detail-close:hover {
+  color: var(--gold-text);
+}
+
+@media (max-width: 600px) {
+  .detail-panel,
+  .auth-panel {
+    margin: 2.5rem auto 1.5rem;
+    width: calc(100% - 1.4rem);
+  }
 }
 
 .detail-image-wrapper {
-  flex: 0 0 40%;
-  border-right: 1px solid rgba(39, 50, 40, 0.9);
-  background: black;
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.5rem;
+  background: radial-gradient(circle at center, #141f18, #020403);
 }
 
 .detail-image-wrapper img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.detail-content {
-  flex: 1;
-  padding: 0.9rem 1rem 1.1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+  max-height: 260px;
+  object-fit: contain;
+  display: block;
 }
 
 .detail-content h2 {
-  margin: 0.1rem 0 0.1rem;
+  margin: 0;
   font-size: 1.1rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--gold-main);
 }
 
 .detail-meta {
-  margin: 0;
-  font-size: 0.82rem;
+  margin: 0.25rem 0 0.2rem;
+  font-size: 0.85rem;
   color: var(--gold-muted);
 }
 
 .detail-price {
-  margin: 0.2rem 0;
+  margin: 0.1rem 0 0.4rem;
+  font-size: 0.9rem;
+  color: var(--gold-text);
+  font-weight: 500;
+}
+
+.detail-description {
+  margin: 0;
   font-size: 0.9rem;
   color: var(--gold-text);
 }
 
-.detail-description {
-  margin: 0.2rem 0 0.4rem;
-  font-size: 0.88rem;
-  line-height: 1.4;
-  color: var(--gold-text);
-}
-
-/* Bewertungsbereich im Detail */
-
 .rating-section {
-  margin-top: 0.2rem;
+  margin-top: 0.4rem;
+  border-top: 1px solid rgba(80, 96, 84, 0.8);
   padding-top: 0.4rem;
-  border-top: 1px solid rgba(39, 50, 40, 0.8);
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .rating-stars {
-  display: inline-flex;
-  gap: 0.1rem;
+  display: flex;
+  gap: 0.25rem;
 }
 
 .rating-stars button {
-  background: transparent;
   border: none;
-  padding: 0;
-  cursor: pointer;
+  background: transparent;
   font-size: 1.2rem;
-  color: rgba(102, 90, 54, 0.7);
+  cursor: pointer;
+  padding: 0.05rem 0.15rem;
+  color: rgba(140, 120, 80, 0.6); /* inaktiv: mattes Gold */
 }
 
 .rating-stars button.is-active {
-  color: rgb(212, 177, 90);
-  text-shadow: 0 0 4px rgba(212, 177, 90, 0.8);
+  color: var(--gold-main); /* aktiver Stern */
+}
+
+.rating-stars button:focus {
+  outline: none;
 }
 
 .rating-note {
   width: 100%;
-  min-height: 3rem;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(39, 50, 40, 0.9);
-  background: rgba(7, 12, 8, 0.98);
-  color: var(--gold-text);
-  font-size: 0.86rem;
-  padding: 0.4rem 0.5rem;
+  min-height: 3.2rem;
   resize: vertical;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 120, 100, 0.7);
+  background: rgba(5, 9, 7, 0.9);
+  color: var(--gold-text);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.rating-note::placeholder {
+  color: rgba(188, 165, 106, 0.7);
+}
+
+.rating-note:focus {
+  outline: none;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
 }
 
 .rating-save {
   align-self: flex-start;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 177, 90, 0.9);
-  background: rgba(12, 18, 13, 0.98);
+  padding: 0.35rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(188, 165, 106, 0.8);
+  background: rgba(10, 15, 11, 0.98);
   color: var(--gold-text);
-  font-size: 0.84rem;
-  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
   cursor: pointer;
 }
 
 .rating-save:hover {
-  background: rgba(23, 34, 25, 0.98);
+  border-color: var(--gold-main);
 }
 
 .rating-hint {
@@ -526,45 +630,17 @@ body {
   color: var(--gold-muted);
 }
 
-/* AUTH-OVERLAY */
-
-.auth-overlay {
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 110;
-}
-
-.auth-overlay.is-visible {
-  display: flex;
-}
-
-.auth-panel {
-  position: relative;
-  max-width: 420px;
-  width: 100%;
-  margin: 0 1rem;
-  border-radius: 0.9rem;
-  border: 1px solid rgba(212, 177, 90, 0.5);
-  background: radial-gradient(circle at top, #18271e, #050806);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.95);
-  padding: 1rem 1.1rem 1rem;
-  z-index: 111;
-}
-
 .auth-panel h2 {
-  margin: 0;
-  font-size: 1.05rem;
-  letter-spacing: 0.06em;
+  margin: 0.2rem 0 0.2rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--gold-main);
 }
 
 .auth-hint {
-  margin: 0.3rem 0 0.7rem;
-  font-size: 0.82rem;
+  margin: 0;
+  font-size: 0.8rem;
   color: var(--gold-muted);
 }
 
@@ -572,122 +648,114 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  margin-top: 0.4rem;
 }
 
 .auth-field {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
+  color: var(--gold-text);
 }
 
 .auth-field input {
-  padding: 0.35rem 0.6rem;
-  border-radius: 0.55rem;
-  border: 1px solid rgba(39, 50, 40, 0.9);
-  background: rgba(7, 12, 8, 0.98);
+  margin-top: 0.18rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 120, 100, 0.7);
+  background: rgba(5, 9, 7, 0.9);
   color: var(--gold-text);
-  font-size: 0.86rem;
+  font-size: 0.85rem;
+}
+
+.auth-field input:focus {
+  outline: none;
+  border-color: var(--gold-main);
+  box-shadow: 0 0 0 1px rgba(212, 177, 90, 0.3);
 }
 
 .auth-submit {
   margin-top: 0.4rem;
-  border-radius: 999px;
-  border: 1px solid rgba(212, 177, 90, 0.9);
-  background: rgba(12, 18, 13, 0.98);
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  border: 1px solid rgba(188, 165, 106, 0.8);
+  background: rgba(10, 15, 11, 0.98);
   color: var(--gold-text);
-  font-size: 0.86rem;
-  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 
 .auth-submit:hover {
-  background: rgba(23, 34, 25, 0.98);
+  border-color: var(--gold-main);
 }
 
 .auth-switch {
-  margin-top: 0.6rem;
+  margin-top: 0.4rem;
   display: flex;
-  justify-content: space-between;
-  gap: 0.3rem;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
 .auth-link {
-  background: transparent;
   border: none;
+  background: transparent;
+  color: var(--gold-muted);
+  font-size: 0.78rem;
+  text-align: left;
   padding: 0;
-  color: var(--gold-main);
-  font-size: 0.8rem;
   cursor: pointer;
 }
 
+.auth-link:hover {
+  color: var(--gold-text);
+}
+
 .auth-message {
-  margin-top: 0.5rem;
+  margin: 0.35rem 0 0;
   font-size: 0.8rem;
-  color: var(--gold-muted);
+  min-height: 1.2em;
 }
 
-/* RESPONSIVE */
-
-@media (max-width: 800px) {
-  .detail-panel {
-    flex-direction: column;
-  }
-
-  .detail-image-wrapper {
-    border-right: none;
-    border-bottom: 1px solid rgba(39, 50, 40, 0.9);
-    flex-basis: auto;
-    max-height: 260px;
-  }
-
-  .detail-image-wrapper img {
-    height: 260px;
-  }
-}
+/* Mobile Anpassung */
 
 @media (max-width: 600px) {
-  .filters {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .sort-controls {
-    align-self: flex-end;
-  }
-
-  .auth-bar {
-    flex-direction: column;
-  }
-
-  .auth-actions {
-    align-self: flex-end;
+  .detail-panel {
+    margin: 2.5rem 0.8rem 1.5rem;
   }
 }
 
-/* STERNCHEN FÜR BERECHNETE BEWERTUNGEN (renderStars) */
+/* Sterne als Text-Glyphen mit CSS-Halbierung */
 
 .star {
-  display: inline-block;
-  width: 0.9rem;
-  height: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-right: 0.05rem;
+  font-size: 1.0rem;
+  line-height: 1.0rem;
   position: relative;
-  margin-right: 1px;
+  vertical-align: middle;
 }
 
-/* Basisstern: leere Kontur in leichtem Gold-Grau */
+.star::before,
+.star::after {
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+}
+
+/* Grundstern – leere Variante in mattgold */
 .star::after {
   content: "★";
   position: absolute;
   inset: 0;
-  color: rgba(102, 90, 54, 0.7);
+  color: rgba(212, 177, 90, 0.25);
 }
 
-/* Voller Stern: vollgoldener Stern */
-.star.full::before {
-  content: "★";
-  position: absolute;
-  inset: 0;
+/* Voller Stern – einfach vollgold */
+.star.full::after {
   color: rgb(212, 177, 90);
   text-shadow: 0 0 3px rgba(212, 177, 90, 0.8);
 }
@@ -707,8 +775,6 @@ body {
   content: "";
 }
 
-/* === Zusätze: Random-Button & Zufalls-Whisky & Detail-Bewertung === */
-
 /* 🎲 Random-Button in der Filterleiste */
 .btn-random {
   border-radius: 999px;
@@ -719,6 +785,8 @@ body {
   padding: 0 0.9rem;
   cursor: pointer;
   white-space: nowrap;
+
+  /* Höhe & Ausrichtung wie Eingabefelder */
   height: 2.4rem;
   display: inline-flex;
   align-items: center;
@@ -730,22 +798,7 @@ body {
   background: rgba(18, 27, 20, 0.98);
 }
 
-/* Detail-Overlay: Zusammenfassung der Durchschnittsbewertung */
-.detail-rating-summary {
-  margin: 0.25rem 0 0.4rem;
-  font-size: 0.86rem;
-  color: var(--gold-text);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.detail-rating-summary .star {
-  margin-right: 1px;
-}
-
-/* 🎲 Zufalls-Overlay */
+/* 🎲 Zufalls-Overlay – leichte Anpassungen */
 .random-panel h2 {
   margin: 0.2rem 0 0.4rem;
   font-size: 1.05rem;
@@ -795,7 +848,6 @@ body {
   color: var(--gold-muted);
 }
 
-/* Zufalls-Whisky-Karte im Overlay mit Bild */
 .random-whisky-card {
   display: flex;
   gap: 0.6rem;
@@ -825,6 +877,10 @@ body {
   display: flex;
   gap: 0.35rem;
   align-items: center;
+}
+
+.random-stars .star {
+  margin-right: 1px;
 }
 
 .random-rating-count {
