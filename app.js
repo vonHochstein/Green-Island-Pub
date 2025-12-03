@@ -522,8 +522,13 @@ async function loadRatingStats() {
     if (data) {
       for (const row of data) {
         const wid = row.whisky_id;
-        const r = Number(row.rating) || 0;
-        if (!wid || !r) continue;
+        const rawRating = row.rating;
+        
+        // wenn rating NULL ist → wir zählen diesen Eintrag nicht als Sterne-Bewertung
+        if (!wid || rawRating === null || rawRating === undefined) continue;
+        
+        const r = Number(rawRating);
+        if (!r) continue; // Fallback-Schutz, falls irgendwas Schräges drinsteht
 
         if (!stats[wid]) stats[wid] = { sum: 0, count: 0, avg: 0 };
         stats[wid].sum += r;
