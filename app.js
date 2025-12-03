@@ -451,8 +451,10 @@ async function saveCurrentRating() {
     currentRatingNote = ratingNote.value.trim();
   }
 
-  // Kein Zwang mehr zu mindestens einem Stern:
-  // rating kann jetzt 0 sein, Note kann leer oder Text sein.
+  // ratingValue 0 => wir interpretieren das als "keine Sterne" = NULL in der DB
+  const ratingToStore =
+    currentRatingValue && currentRatingValue > 0 ? currentRatingValue : null;
+
   try {
     if (ratingHint) {
       ratingHint.textContent = "Speichere Bewertung …";
@@ -464,8 +466,8 @@ async function saveCurrentRating() {
         {
           user_id: currentUser.id,
           whisky_id: currentWhisky.id,
-          rating: currentRatingValue,   // 0 = "keine Sterne"
-          notes: currentRatingNote      // "" oder Text
+          rating: ratingToStore,     // kann jetzt auch null sein
+          notes: currentRatingNote   // "" oder Text
         },
         {
           onConflict: "user_id,whisky_id"
@@ -481,8 +483,10 @@ async function saveCurrentRating() {
     }
 
     if (ratingHint) {
-      if (!currentRatingValue && !currentRatingNote) {
+      if (ratingToStore === null && !currentRatingNote) {
         ratingHint.textContent = "Eintrag ohne Bewertung gespeichert.";
+      } else if (ratingToStore === null && currentRatingNote) {
+        ratingHint.textContent = "Notiz ohne Sterne gespeichert.";
       } else {
         ratingHint.textContent = "Bewertung gespeichert.";
       }
