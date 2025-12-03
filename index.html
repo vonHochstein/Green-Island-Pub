@@ -21,12 +21,12 @@
   </header>
 
   <main class="wrapper">
-    
+    <!-- Auth-Leiste -->
     <div class="auth-bar">
       <div class="auth-info">
         <span id="authStatus"></span>
-    
-        <!-- Fortschritt jetzt IN der Auth-Bar -->
+
+        <!-- Fortschritt in der Auth-Bar -->
         <div id="progressSection" class="auth-progress hidden">
           <p id="progressText" class="progress-text"></p>
           <div class="progress-bar-wrapper">
@@ -34,21 +34,22 @@
           </div>
         </div>
       </div>
-    
+
       <div class="auth-actions">
         <button id="btnLogin">Anmelden</button>
         <button id="btnRegister">Registrieren</button>
         <button id="btnLogout" class="hidden">Abmelden</button>
       </div>
     </div>
-    
+
+    <!-- Filter / Suche / Sortierung -->
     <section class="filters">
       <input
         id="searchInput"
         type="text"
         placeholder="Suche nach Name, Destillerie, Stil, Land …"
       />
-    
+
       <div class="sort-controls">
         <select id="sortFieldSelect">
           <option value="name">Name</option>
@@ -57,7 +58,7 @@
           <option value="rating_avg">Gesamtbewertung</option>
           <option value="rating_my" data-scope="my">Deine Bewertung</option>
         </select>
-    
+
         <button
           id="sortDirToggle"
           class="sort-dir sort-dir-asc"
@@ -78,12 +79,13 @@
       </div>
     </section>
 
+    <!-- Status + Grid -->
     <section id="status" class="status">
       Lade Whiskys …
     </section>
 
     <section id="whiskyGrid" class="whisky-grid">
-      <!-- Karten werden per JS eingefügt -->
+      <!-- Karten via JS -->
     </section>
   </main>
 
@@ -101,9 +103,14 @@
       <div class="detail-content">
         <h2 id="detailName"></h2>
         <p id="detailMeta" class="detail-meta"></p>
+
+        <!-- Durchschnittsbewertung im Detail -->
+        <p id="detailRatingSummary" class="detail-rating-summary"></p>
+
         <p id="detailPrice" class="detail-price"></p>
         <p id="detailDescription" class="detail-description"></p>
-        
+
+        <!-- Bewertungsbereich – nur sichtbar, wenn angemeldet -->
         <div id="ratingSection" class="rating-section">
           <div id="ratingStars" class="rating-stars">
             <button type="button" data-value="1">★</button>
@@ -112,20 +119,20 @@
             <button type="button" data-value="4">★</button>
             <button type="button" data-value="5">★</button>
           </div>
-        
+
           <textarea
             id="ratingNote"
             class="rating-note"
             rows="3"
             placeholder="Deine persönliche Notiz zu diesem Whisky …"
           ></textarea>
-        
+
           <button type="button" id="ratingSave" class="rating-save">
             Bewertung speichern
           </button>
-        
+
           <p id="ratingHint" class="rating-hint">
-            Bitte anmelden, um zu bewerten.
+            Gib deine persönliche Bewertung ab.
           </p>
         </div>
       </div>
@@ -142,7 +149,7 @@
       <h2>Zufalls-Whisky</h2>
 
       <div id="randomContent" class="random-content">
-        <!-- Inhalt wird per JS gesetzt -->
+        <!-- Inhalt per JS -->
       </div>
 
       <div class="random-actions">
@@ -155,7 +162,7 @@
       </div>
     </article>
   </div>
-  
+
   <!-- Auth-Overlay für Login / Registrierung -->
   <div id="authOverlay" class="auth-overlay" aria-hidden="true">
     <div class="detail-backdrop" id="authBackdrop"></div>
