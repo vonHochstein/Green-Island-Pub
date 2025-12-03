@@ -451,45 +451,13 @@ async function saveCurrentRating() {
     currentRatingNote = ratingNote.value.trim();
   }
 
-  // Fall 1: keine Sterne und keine Notiz → Bewertung löschen
-  if (!currentRatingValue && !currentRatingNote) {
-    try {
-      const { error } = await supabaseClient
-        .from("ratings_green_island")
-        .delete()
-        .eq("user_id", currentUser.id)
-        .eq("whisky_id", currentWhisky.id);
-
-      if (error) {
-        console.error(error);
-        if (ratingHint) {
-          ratingHint.textContent = "Bewertung konnte nicht gelöscht werden.";
-        }
-        return;
-      }
-
-      // UI zurücksetzen
-      setRatingUI(0, "");
-      if (ratingHint) {
-        ratingHint.textContent = "Bewertung gelöscht.";
-      }
-
-      await loadRatingStats();
-      return;
-    } catch (err) {
-      console.error(err);
-      if (ratingHint) {
-        ratingHint.textContent = "Bewertung konnte nicht gelöscht werden.";
-      }
-      return;
-    }
+  if (!currentRatingValue) {
+    ratingHint.textContent = "Bitte mindestens einen Stern vergeben.";
+    return;
   }
 
-  // Fall 2: Sterne oder Notiz vorhanden → speichern / aktualisieren
   try {
-    if (ratingHint) {
-      ratingHint.textContent = "Speichere Bewertung …";
-    }
+    ratingHint.textContent = "Speichere Bewertung …";
 
     const { error } = await supabaseClient
       .from("ratings_green_island")
@@ -497,8 +465,8 @@ async function saveCurrentRating() {
         {
           user_id: currentUser.id,
           whisky_id: currentWhisky.id,
-          rating: currentRatingValue,     // kann jetzt auch 0 sein
-          notes: currentRatingNote        // kann leer oder Text sein
+          rating: currentRatingValue,
+          notes: currentRatingNote
         },
         {
           onConflict: "user_id,whisky_id"
@@ -507,22 +475,15 @@ async function saveCurrentRating() {
 
     if (error) {
       console.error(error);
-      if (ratingHint) {
-        ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
-      }
+      ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
       return;
     }
 
-    if (ratingHint) {
-      ratingHint.textContent = "Bewertung gespeichert.";
-    }
-
+    ratingHint.textContent = "Bewertung gespeichert.";
     loadRatingStats();
   } catch (err) {
     console.error(err);
-    if (ratingHint) {
-      ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
-    }
+    ratingHint.textContent = "Bewertung konnte nicht gespeichert werden.";
   }
 }
 
