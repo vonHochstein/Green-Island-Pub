@@ -90,7 +90,7 @@ const authMessage = document.getElementById("authMessage");
 const randomOverlay = document.getElementById("randomOverlay");
 const randomBackdrop = document.getElementById("randomBackdrop");
 const randomClose = document.getElementById("randomClose");
-const randomContent = document.getElementById("randomContent");
+const randomContent = document.getElementById("randomWhiskyCard");
 const btnRandomWhisky = document.getElementById("btnRandomWhisky");
 const btnRandomNext = document.getElementById("btnRandomNext");
 const btnRandomClose = document.getElementById("btnRandomClose");
@@ -776,7 +776,12 @@ function pickRandomWhisky(excludeId = null) {
 
 function renderRandomWhiskyCard(whisky) {
   const container = document.getElementById("randomWhiskyCard");
-  if (!container || !whisky) {
+  if (!container) return;
+  
+  if (!whisky) {
+    container.innerHTML = `
+      <p class="random-empty">Keine weiteren Vorschläge verfügbar.</p>
+    `;
     return;
   }
 
@@ -841,12 +846,12 @@ function showRandomWhisky() {
 
   if (!whisky) {
     lastRandomWhiskyId = null;
-    renderRandomWhisky(null);
+    renderRandomWhiskyCard(null);
     return;
   }
 
   lastRandomWhiskyId = whisky.id;
-  renderRandomWhisky(whisky);
+  renderRandomWhiskyCard(whisky);
 }
 
 function openRandomOverlay() {
