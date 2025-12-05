@@ -774,81 +774,63 @@ function pickRandomWhisky(excludeId = null) {
   return pool[index];
 }
 
-function renderRandomWhisky(w) {
-  if (!randomContent) return;
-
-  if (!w) {
-    randomContent.innerHTML = `
-      <p class="random-empty">
-        Es gibt aktuell keine weiteren Vorschläge.
-      </p>
-      <p class="random-empty">
-        Entweder sind keine Whiskys hinterlegt oder du hast bereits alle bewertet.
-      </p>
-    `;
+function renderRandomWhiskyCard(whisky) {
+  const container = document.getElementById("randomWhiskyCard");
+  if (!container || !whisky) {
     return;
   }
 
-  const metaParts = [];
-  if (w.distillery) metaParts.push(w.distillery);
-  if (w.origin_country) metaParts.push(w.origin_country);
-  if (w.style) metaParts.push(w.style);
-  if (w.abv != null) metaParts.push(`${w.abv}% Vol.`);
-
+  // Preise
   const priceParts = [];
-  if (w.price_eur != null) {
-    priceParts.push(`2 cl ${w.price_eur.toFixed(2)} €`);
+  if (whisky.price_eur != null) {
+    priceParts.push(`2 cl ${whisky.price_eur.toFixed(2)} €`);
   }
-  if (w.price_4cl_eur != null) {
-    priceParts.push(`4 cl ${w.price_4cl_eur.toFixed(2)} €`);
+  if (whisky.price_4cl_eur != null) {
+    priceParts.push(`4 cl ${whisky.price_4cl_eur.toFixed(2)} €`);
   }
 
-  // Durchschnittsbewertung aus ratingStatsByWhisky holen
-  const stats = ratingStatsByWhisky[w.id];
-  let ratingHtml = "";
+  // Meta-Zeile
+  const metaParts = [];
+  if (whisky.distillery) metaParts.push(whisky.distillery);
+  if (whisky.origin_country) metaParts.push(whisky.origin_country);
+  if (whisky.style) metaParts.push(whisky.style);
+  if (whisky.abv != null) metaParts.push(`${whisky.abv}% Vol.`);
+
+  // Bild
+  const imgUrl =
+    whisky.image_url ||
+    "https://dummyimage.com/400x260/111111/ffffff&text=Whisky";
+
+  // Durchschnittsbewertung aus ratingStatsByWhisky
+  const stats = ratingStatsByWhisky[whisky.id];
+  let ratingSummaryHtml = "Noch keine Bewertungen.";
 
   if (stats && stats.count > 0) {
     const avgRounded = Math.round(stats.avg * 10) / 10;
-    ratingHtml = `
-      <p class="random-rating">
-        Ø ${avgRounded.toFixed(1)}
-        <span class="random-stars">${renderStars(stats.avg)}</span>
-        <span class="random-rating-count">(${stats.count})</span>
-      </p>
-    `;
-  } else {
-    ratingHtml = `
-      <p class="random-rating random-rating-empty">
-        Noch keine Bewertungen.
-      </p>
-    `;
+    ratingSummaryHtml = `Ø ${avgRounded.toFixed(1)} ${renderStars(
+      stats.avg
+    )} (${stats.count})`;
   }
 
-  const imgSrc =
-    w.image_url ||
-    "https://dummyimage.com/400x260/111111/ffffff&text=Whisky";
+  container.innerHTML = `
+    <div class="detail-image-wrapper">
+      <img src="${imgUrl}" alt="${whisky.name || "Whisky"}">
+    </div>
 
-  randomContent.innerHTML = `
-    <div class="random-whisky-card">
-      <div class="random-image-wrapper">
-        <img src="${imgSrc}" alt="${w.name || "Whisky"}" />
-      </div>
-      <div class="random-text">
-        <h3>${w.name || "Unbekannter Whisky"}</h3>
-        <p class="random-meta">
-          ${metaParts.join(" · ") || "Keine weiteren Angaben"}
-        </p>
-        ${ratingHtml}
-        ${
-          priceParts.length
-            ? `<p><strong>Preis im Pub:</strong> ${priceParts.join(" · ")}</p>`
-            : ""
-        }
-        ${
-          w.description
-            ? `<p class="random-notes">${w.description}</p>`
-            : `<p class="random-notes">Für diesen Whisky liegt noch keine Beschreibung vor.</p>`
-        }
+    <div class="detail-content">
+      <h2 class="detail-title">${whisky.name || "Unbekannter Whisky"}</h2>
+      <p class="detail-meta">
+        ${metaParts.join(" · ") || "Keine weiteren Angaben"}
+      </p>
+      <p class="detail-price">
+        ${priceParts.join(" · ") || ""}
+      </p>
+      <p class="detail-description">
+        ${whisky.description || "Noch keine Beschreibung hinterlegt."}
+      </p>
+
+      <div class="whisky-rating-summary">
+        ${ratingSummaryHtml}
       </div>
     </div>
   `;
